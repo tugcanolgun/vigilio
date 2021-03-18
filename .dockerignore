@@ -1,0 +1,9 @@
+frontend/src/
+frontend/node_modules/
+docs/
+htmlcov/
+venv/
+data/
+docs/
+.git/
+

@@ -1,0 +1,69 @@
+version: '3'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: ./compose/production/django/Dockerfile
+    image: vigilio_web
+    # '/start' is the shell script used to run the service
+    command: /start
+    # this volume is used to map the files and folders on the host to the container
+    # so if we change code on the host, code in the docker container will also be changed
+    volumes:
+      - .:/app
+      - static_volume:/app/statics
+      - media_volume:/app/media
+      - ./data/downloads:/app/data/downloads
+    # env_file is used to manage the env variables of our project
+    env_file:
+      - ./.dockerenv
+    environment:
+      - UID=1000
+      - GID=1000
+    depends_on:
+      - redis
+  nginx:
+    image: nginx:1.13
+    ports:
+      - 8000:80
+    volumes:
+      - ./compose/production/nginx:/etc/nginx/conf.d
+      - static_volume:/app/statics
+      - media_volume:/app/media
+      - ./data/downloads:/app/data/downloads
+    depends_on:
+      - web
+    environment:
+      - UID=1000
+      - GID=1000
+  redis:
+    image: redis
+    expose:
+      - "6379"
+  qbittorrent:
+    image: gists/qbittorrent
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./data:/data
+    environment:
+      - UID=1000
+      - GID=1000
+    restart: always
+  celery:
+    build:
+      context: .
+      dockerfile: ./compose/production/django/Dockerfile
+    image: vigilio_celery_worker
+    command: /start-celeryworker
+    volumes:
+      - .:/app
+    env_file:
+      - ./.dockerenv
+    depends_on:
+      - redis
+
+volumes:
+  static_volume:
+  media_volume:

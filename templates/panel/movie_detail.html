@@ -1,0 +1,13 @@
+{% extends 'stream/base.html' %}
+{% load static %}
+{% block header %}
+    <link href="{% static 'css/fileManager.css' %}" rel="stylesheet" crossorigin="anonymous">
+{% endblock %}
+
+{% block content %}
+    {% csrf_token %}
+    <div id="root" mid="{{ movie_id }}"></div>
+{% endblock %}
+{% block footer %}
+    <script src="{% static 'MovieDetail-bundle.js' %}"></script>
+{% endblock %}

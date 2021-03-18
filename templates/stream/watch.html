@@ -1,0 +1,162 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" type="image/jpg" href="{% static 'favicon.ico' %}"/>
+    <link href="https://vjs.zencdn.net/7.10.2/video-js.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <link href="{% static 'css/qualitySelector.css' %}" rel="stylesheet"/>
+    <link href="{% static 'css/playerTheme.css' %}" rel="stylesheet"/>
+    <meta charset="UTF-8">
+    <title>Watch</title>
+</head>
+<body>
+<div style="width: 100%; height: 100%;">
+    <div id="backButton" onclick="backButtonFunc()"
+         style="position: absolute; margin-left: 2%; margin-top: 2%; z-index: 10; cursor: pointer;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-arrow-left back-button"
+             viewBox="0 0 16 16">
+            <path fill-rule="evenodd"
+                  d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+        </svg>
+    </div>
+    <video
+            id="my-video"
+            class="video-js vjs-default-skin"
+            controls
+            preload="auto"
+            poster="{{ poster }}"
+            data-setup='{}'
+    >
+        {% for subtitle in subtitles %}
+            {% if forloop.first %}
+                <track kind="captions" src="{{ subtitle.url }}" srclang="en" label="{{ subtitle.name }}"
+                       default/>
+            {% else %}
+                <track kind="captions" src="{{ subtitle.url }}" srclang="en" label="{{ subtitle.name }}"/>
+            {% endif %}
+        {% endfor %}
+        <p class="vjs-no-js">
+            To view this video please enable JavaScript, and consider upgrading to a
+            web browser that
+            <a href="https://videojs.com/html5-video-support/" target="_blank"
+            >supports HTML5 video</a
+            >
+        </p>
+    </video>
+</div>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0"
+        crossorigin="anonymous"></script>
+<script src="https://vjs.zencdn.net/7.10.2/video.min.js"></script>
+<script src="//cdn.sc.gl/videojs-hotkeys/latest/videojs.hotkeys.min.js"></script>
+<script src="{% static 'js/qualitySelector.js' %}"></script>
+<script>
+  window.HELP_IMPROVE_VIDEOJS = false;
+  var player = videojs('my-video');
+  var movieId = {{ movie.id }};
+  var skipToSecond = {{ start_from }};
+  var lastSecond = 0;
+
+  player.videoJsResolutionSwitcher()
+
+
+  player.textTrackSettings.setDefaults();
+  player.textTrackSettings.setValues(
+    {
+      backgroundOpacity: '0',
+      edgeStyle: 'raised',
+    }
+  );
+  player.textTrackSettings.updateDisplay();
+
+  player.updateSrc([
+    {% for content in video_details %}
+      {% if content.is_ready %}
+        {
+          src: '{{ content.url }}',
+          type: 'video/{{ content.suffix }}',
+          label: '{{ content.quality }}'
+        },
+      {% endif %}
+    {% endfor %}
+  ]);
+
+  player.ready(function () {
+    console.log(`Skipping to ${skipToSecond} second.`)
+    player.currentTime(skipToSecond);
+    {#player.play();#}
+    this.hotkeys({
+      volumeStep: 0.1,
+      seekStep: 15,
+      enableVolumeScroll: false
+    });
+  })
+
+  function saveCurrentSecond(movieId, currentSecond, remainingSeconds) {
+    if (currentSecond <= 0)
+      return;
+
+    fetch('{{ save_current_second_api_path }}', {
+      method: "POST",
+      body: JSON.stringify({
+        movieId, currentSecond, remainingSeconds,
+      }),
+      headers: {
+        "content-type": "application/json",
+        "X-CSRFToken": '{{ csrf_token }}'
+
+      },
+    }).catch(function (error) {
+      console.warn("Error: " + error);
+    });
+  }
+
+  setInterval(function () {
+      var currentTime = player.currentTime();
+      if (currentTime !== lastSecond) {
+        lastSecond = currentTime;
+        saveCurrentSecond(movieId, currentTime, player.remainingTime())
+      }
+    },
+    3000
+  );
+
+  // BACK BUTTON
+
+  var httpReferer = '{{ HTTP_REFERER }}';
+  var mouse = {x: -1, y: -1};
+  var lastMouse = {x: -2, y: -2};
+  var backButton = document.getElementById('backButton');
+  setInterval(function () {
+      if (player && !player.paused() && JSON.stringify(mouse) === JSON.stringify(lastMouse)) {
+        backButton.style.display = 'none';
+      } else {
+        lastMouse.x = mouse.x;
+        lastMouse.y = mouse.y;
+      }
+    },
+    1000
+  );
+
+  function tellPos(p) {
+    mouse.x = p.pageX;
+    mouse.y = p.pageY;
+    backButton.style.display = 'block';
+  }
+
+  function backButtonFunc() {
+    if (httpReferer !== '')
+      window.location.href = httpReferer;
+    else {
+      window.location.href = '/';
+    }
+  }
+
+  addEventListener('mousemove', tellPos, false);
+</script>
+</html>

@@ -1,0 +1,64 @@
+{% extends 'stream/base.html' %}
+
+{% block header %}
+    <style type="text/css">
+        body {
+            background-color: black;
+        }
+
+        h1, h2, h3, h4, h5, h6, p, td {
+            color: white;
+        }
+
+        .vertical-center {
+            min-height: 80%; /* Fallback for browsers do NOT support vh unit */
+            min-height: 80vh; /* These two lines are counted as one :-)       */
+
+            display: flex;
+            align-items: center;
+        }
+
+        .horizontal-center {
+            width: 100%;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+
+    <div class="vertical-center">
+        <div class="horizontal-center d-flex justify-content-center">
+            <div>
+                <h1>Background Processes</h1>
+                <br/>
+                {% if messages %}
+                    <hr color="#ffffff"/>
+                    <ul class="messages">
+                        {% for message in messages %}
+                            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}><h2>{{ message }}</h2></li>
+                        {% endfor %}
+                    </ul>
+                    <hr color="#ffffff"/>
+                {% endif %}
+                {% if qbittorrent %}
+                    <h3>Qbittorrent is running</h3>
+                {% else %}
+                    <h3>Qbittorrent is NOT running</h3>
+                {% endif %}
+                <hr color="#ffffff"/>
+                {% if redis %}
+                    <h3>Redis is running</h3>
+                {% else %}
+                    <h3>Redis is NOT running</h3>
+                {% endif %}
+                <hr color="#ffffff"/>
+                {% if celery %}
+                    <h3>Celery is running</h3>
+                {% else %}
+                    <h3>Celery is NOT running</h3>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

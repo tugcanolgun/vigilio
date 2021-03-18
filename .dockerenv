@@ -1,0 +1,14 @@
+ENV_FILE=".dockerenv"
+SECRET_KEY=""
+MOVIEDB_API=""
+QBITTORRENT_USERNAME=admin
+QBITTORRENT_PASSWORD=adminadmin
+DOWNLOAD_URI=/downloads/
+ALLOWED_URLS="*"
+MEDIA_FOLDER=/app/data/downloads/
+DELETE_ORIGINAL_FILES=true
+DEMO=false
+QBITTORRENT_URL=http://qbittorrent:8080/
+CELERY_BROKER_URL=redis://redis:6379/0
+CELERY_RESULT_BACKEND=redis://redis:6379/1
+

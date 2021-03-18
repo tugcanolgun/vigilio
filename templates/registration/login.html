@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <title>Login</title>
+    <style type="text/css">
+        body {
+            background-color: black;
+            color: white;
+        }
+
+        .vertical-center {
+            min-height: 100vh;
+
+            display: flex;
+            align-items: center;
+        }
+
+        .horizontal-center {
+            width: 100%;
+        }
+
+        .input-style {
+            background-color: rgb(33, 37, 41); !important;
+            outline: none;
+            border: none;
+            color: white;
+            box-shadow: none;
+            font-size: x-large;
+            padding-left: 0.6rem;
+        }
+        .input-style:focus {
+            background-color: rgb(33, 37, 41); !important;
+            outline: none;
+            border: none;
+            color: white;
+            box-shadow: none;
+            font-size: x-large;
+            padding-left: 0.6rem;
+        }
+
+        .form-control::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+            color: #c2c2c2;
+            opacity: 1; /* Firefox */
+        }
+
+        .form-control:-ms-input-placeholder { /* Internet Explorer 10-11 */
+            color: #c2c2c2;
+        }
+
+        .form-control::-ms-input-placeholder { /* Microsoft Edge */
+            color: #c2c2c2;
+        }
+    </style>
+</head>
+<body>
+<div class="vertical-center">
+    <div class="horizontal-center d-flex justify-content-center">
+        <div>
+            {% if form.errors %}
+                <p>Your username and password didn't match. Please try again.</p>
+            {% endif %}
+
+            {% if next %}
+                {% if user.is_authenticated %}
+                    <p>Your account doesn't have access to this page. To proceed,
+                        please login with an account that has access.</p>
+                {% else %}
+                    <p style="color: grey">Please login to see this page.</p>
+                {% endif %}
+            {% endif %}
+
+            <form method="post" action="{% url 'login' %}">
+                {% csrf_token %}
+                <table>
+                    <tr>
+                        <input placeholder="Username" name="username" id="username"
+                               type="text" class="form-control input-style my-3" aria-label=""
+                               aria-describedby="basic-addon1" autofocus
+                        />
+                    </tr>
+                    <tr>
+                        <input placeholder="Password" name="password" id="password"
+                               type="password" class="form-control input-style" aria-label=""
+                               aria-describedby="basic-addon1" autofocus
+                        />
+                    </tr>
+                </table>
+
+                <div class="text-end">
+
+                    <input type="submit" class="btn btn-light my-3" value="login">
+                    <input type="hidden" name="next" value="{{ next }}">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0"
+        crossorigin="anonymous"></script>
+</html>

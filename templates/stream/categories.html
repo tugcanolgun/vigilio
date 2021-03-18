@@ -1,0 +1,10 @@
+{% extends 'stream/base.html' %}
+{% load static %}
+
+{% block content %}
+    {% csrf_token %}
+    <div id="main"></div>
+{% endblock %}
+{% block footer %}
+    <script src="{% static 'Categories-bundle.js' %}"></script>
+{% endblock %}

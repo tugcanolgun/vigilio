@@ -1,0 +1,44 @@
+{% extends 'stream/base.html' %}
+{% load static %}
+
+{% block content %}
+
+    <div>
+        <h1>Management tools</h1>
+        <a href="{% url 'panel:add_movie' %}" class="btn btn-secondary my-2" role="button"
+           aria-pressed="true">Add Movie</a>
+        <a href="{% url 'panel:background_management' %}" class="btn btn-secondary my-2" role="button"
+           aria-pressed="true">Background Management</a>
+        <a href="{% url 'panel:settings' %}" class="btn btn-secondary my-2" role="button"
+           aria-pressed="true">Settings</a>
+        <h2 class="mt-4">Movies list</h2>
+        <table class="table table-dark table-hover">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Title</th>
+                <th scope="col">Date</th>
+                <th scope="col">IMDB</th>
+                <th scope="col">Manage</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for movie in movies %}
+                <tr>
+                    <th scope="row">{{ forloop.counter }}</th>
+                    {% if movie.title %}
+                        <td>{{ movie.title }}</td>
+                    {% else %}
+                        <td>{{ movie.imdb_id }}</td>
+                    {% endif %}
+                    <td>{{ movie.release_date.year }}</td>
+                    <td>{{ movie.imdb_score }}</td>
+                    <td><a href="{% url 'panel:movie_detail' movie.id %}"
+                           class="btn btn-sm btn-outline-light">Manage</a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+{% endblock %}

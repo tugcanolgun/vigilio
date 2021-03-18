@@ -1,0 +1,10 @@
+{% extends 'stream/base.html' %}
+{% load static %}
+
+{% block content %}
+    {% csrf_token %}
+    <div id="root"></div>
+{% endblock %}
+{% block footer %}
+    <script src="{% static 'UserHistory-bundle.js' %}"></script>
+{% endblock %}

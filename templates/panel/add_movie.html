@@ -1,0 +1,13 @@
+{% extends 'stream/base.html' %}
+{% load static %}
+{% block header %}
+    <link href="{% static 'css/searchMovieYts.css' %}" rel="stylesheet" crossorigin="anonymous">
+{% endblock %}
+
+{% block content %}
+    {% csrf_token %}
+    <div id="root"></div>
+{% endblock %}
+{% block footer %}
+    <script src="{% static 'AddMovieYts-bundle.js' %}"></script>
+{% endblock %}

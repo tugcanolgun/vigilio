@@ -1,0 +1,50 @@
+{% extends 'stream/base.html' %}
+
+{% block header %}
+    <style type="text/css">
+        body {
+            background-color: black;
+        }
+        h1,h2,h3,h4,h5,h6,p,td {
+            color: white;
+        }
+        .vertical-center {
+            min-height: 80%;  /* Fallback for browsers do NOT support vh unit */
+            min-height: 80vh; /* These two lines are counted as one :-)       */
+
+            display: flex;
+            align-items: center;
+        }
+        .horizontal-center {
+            width: 100%;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+
+<div class="vertical-center">
+    <div class="horizontal-center d-flex justify-content-center">
+        <div>
+            <h1>Setup</h1>
+            {% if messages %}
+                <hr color="#ffffff" />
+                <ul class="messages">
+                    {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}><h2>{{ message }}</h2></li>
+                    {% endfor %}
+                </ul>
+                <hr color="#ffffff" />
+            {% endif %}
+            {% for name, infos in commands.items %}
+                <h3>{{ name }}</h3>
+                {% for info in infos %}
+                    <p>{{ info }}</p>
+                {% endfor %}
+                <hr color="#ffffff" />
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

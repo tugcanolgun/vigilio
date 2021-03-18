@@ -1,0 +1,17 @@
+{% extends 'stream/base.html' %}
+{% load static %}
+{% block header %}
+    <style>
+        a {
+            border: 0;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    {% csrf_token %}
+    <div id="root" mid="{{ movie_id }}"></div>
+{% endblock %}
+{% block footer %}
+    <script src="{% static 'Settings-bundle.js' %}"></script>
+{% endblock %}

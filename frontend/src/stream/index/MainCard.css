@@ -1,0 +1,9 @@
+.glowOnHover {
+    border: 0px solid #666;
+    border-radius: 5px;
+}
+.glowOnHover:hover {
+    border: 0px solid #07c;
+    box-shadow: 0 0 25px #07c;
+    outline: none;
+}
