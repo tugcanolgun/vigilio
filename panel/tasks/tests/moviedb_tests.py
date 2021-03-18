@@ -25,7 +25,7 @@ class TestGetMovieDBApiKey:
         with pytest.raises(Exception) as exc:
             _get_moviedb_api_key()
 
-        assert str(exc.value) == "There is no MOVIEDB_API in settings."
+        assert str(exc.value) == "MOVIEDB_API could not be found or empty."
 
     @pytest.mark.parametrize("moviedb_api", [None, ""])
     def test_raises_when_setting_is_empty(
@@ -36,7 +36,7 @@ class TestGetMovieDBApiKey:
         with pytest.raises(Exception) as exc:
             _get_moviedb_api_key()
 
-        assert str(exc.value) == "MOVIEDB_API has to be a valid string."
+        assert str(exc.value) == "MOVIEDB_API could not be found or empty."
 
     def test_retuns_moviedb_api(self, mocker: MockerFixture) -> None:
         mockerdb_api: str = "abcdef"

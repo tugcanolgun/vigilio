@@ -4,8 +4,8 @@ import logging
 from typing import Dict, Any
 
 import requests
-from django.conf import settings
 
+from panel.tasks.inmemory import get_setting
 from stream.models import Movie, MovieDBCategory
 from watch.celery import app
 
@@ -13,13 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 def _get_moviedb_api_key() -> str:
-    if not hasattr(settings, "MOVIEDB_API"):
-        raise Exception("There is no MOVIEDB_API in settings.")
-
-    if settings.MOVIEDB_API is None or settings.MOVIEDB_API == "":
-        raise Exception("MOVIEDB_API has to be a valid string.")
-
-    return settings.MOVIEDB_API
+    return get_setting("MOVIEDB_API")
 
 
 def _get_response_from_moviedb_api(url: str) -> Dict[str, Any]:

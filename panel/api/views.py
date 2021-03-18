@@ -4,6 +4,7 @@ from typing import List, Dict, Any
 
 import dotenv
 from celery.app.control import Inspect
+from django.conf import settings
 from django.contrib.auth.models import User
 from qbittorrent import Client
 from rest_framework import status, permissions, generics
@@ -42,6 +43,7 @@ from panel.api.validators import MovieManagementValidation, FilesValidation
 from panel.decorators import check_demo
 from panel.management.commands import superuser
 from panel.models import MudSource
+from panel.tasks.inmemory import set_redis
 from panel.tasks.torrent import get_qbittorrent_client
 from watch.celery import app
 
@@ -222,6 +224,9 @@ class GlobalSettingsEndpoint(GenericAPIView):
 
         for key, value in serializer.object.dotenv.items():
             dotenv.set_key(get_dotenv_location(), key, value)
+            set_redis(key, str(value))
+
+        dotenv.load_dotenv(settings.DOTENV)
 
         return Response({"dotenv": "success"})
 

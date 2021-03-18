@@ -9,9 +9,9 @@ from pathlib import Path, PosixPath
 from typing import Dict, Any, Optional, List, Set
 
 import requests
-from django.conf import settings
 from requests import Response
 
+from panel.tasks.inmemory import get_setting
 from panel.tasks.opensubtitles_hasher import get_hash
 from panel.tasks.srt_to_vtt import convert_srt_to_vtt
 from stream.models import MovieContent, Movie, MovieSubtitle
@@ -132,9 +132,9 @@ def _change_permissions(subtitles_folder: PosixPath) -> None:
 
 
 def get_subtitle_language() -> List[str]:
-    if hasattr(settings, "SUBTITLE_LANGS") and settings.SUBTITLE_LANGS:
-        if settings.SUBTITLE_LANGS != "-":
-            return settings.SUBTITLE_LANGS.split(",")
+    result: Optional[List[str]] = get_setting("SUBTITLE_LANGS", suppress_errors=True)
+    if result and "-" not in result:
+        return result.split(",")
 
     return []
 

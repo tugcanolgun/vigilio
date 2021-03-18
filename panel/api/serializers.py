@@ -4,7 +4,7 @@ from typing import List, Dict, Any, Set
 
 from rest_framework import serializers
 
-from panel.api.utils import get_dotenv_values, DotenvFilter
+from panel.api.utils import DotenvFilter
 from panel.models import MudSource
 
 TORRENT_COMMANDS: List[str] = [

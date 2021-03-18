@@ -46,7 +46,7 @@ const DotenvSettings = ({ settings, fetchSettings }) => {
             key={i}
             keyName={keyName}
             value={settings[keyName]}
-            saveFunction={saveDotenvs}
+            refFunction={saveDotenvs}
           />
         ))}
       </tbody>
@@ -72,6 +72,10 @@ const DotenvSettings = ({ settings, fetchSettings }) => {
         Changing these settings may cause the system to not work properly. Be
         very cautious.
       </h4>
+      <p>
+        Some of these settings requires the system to be restarted in order to
+        take affect.
+      </p>
       {renderErrorMessage()}
       {renderInfoMessage()}
       <table className="table table-dark table-hover">
