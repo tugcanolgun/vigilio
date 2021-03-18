@@ -233,7 +233,7 @@ class MudSourcesList(generics.ListCreateAPIView):
 
     @check_demo
     def perform_create(self, serializer: MudSourceSerializer) -> None:
-        serializer.save(user=self.request.user)
+        serializer.save()
 
 
 class MudSourceEndpoint(APIView):

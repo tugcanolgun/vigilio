@@ -11,6 +11,7 @@ a, a:hover, a:active {
     color: white;
     outline: none;
     cursor: pointer;
+    text-decoration: underline;
 }
 
 .btn:focus, .btn:active {

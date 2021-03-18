@@ -33,8 +33,8 @@ const Index = () => {
       .post(
         '/panel/api/add-movie',
         {
-          imdbId: imdbId,
-          source: source,
+          imdbId,
+          source,
         },
         {
           headers: {

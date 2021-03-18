@@ -57,8 +57,8 @@ const Result = ({ data, downloadFunction }) => {
                   <button
                     onClick={() => {
                       downloadFunction({
-                        imdbId: movie.imdb_code,
-                        source: torrent.url,
+                        imdbId: data.imdbId,
+                        source: torrent.source,
                       });
                       window.location.href = '#';
                     }}

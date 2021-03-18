@@ -18,10 +18,8 @@ const AddMudSource = ({ setPage = null }) => {
     setErrorMessage('');
     if (schema !== '') {
       try {
-        console.log('checking schema');
         checkMudSchema(JSON.parse(schema));
         if (name !== '') {
-          console.log('button true');
           setButtonEnabled(true);
         }
       } catch (e) {

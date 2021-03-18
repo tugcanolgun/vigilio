@@ -60,7 +60,15 @@ const SearchMovieIndex = ({ addMovieRequest }) => {
         <div>
           <h3>There are no sources</h3>
           Please add sources in the&nbsp;
-          <a href="/panel/settings/">settings</a>.
+          <a
+            onClick={() => {
+              setLocal('settingsTabPref', 'Search Sources');
+              window.location.href = '/panel/settings/';
+            }}
+            style={{ textDecoration: 'underline' }}>
+            settings
+          </a>
+          .
         </div>
       );
 
