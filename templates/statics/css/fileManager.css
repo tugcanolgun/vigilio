@@ -1,0 +1,13 @@
+.show-files {
+    background-color: #212529;
+    background-image: linear-gradient(#1d1f26, #22242b);
+}
+
+.show-files:hover {
+    background-color: #31373d;
+    background-image: linear-gradient(#212529, #31373d);
+}
+
+.used-file {
+    color: #81ef81;
+}

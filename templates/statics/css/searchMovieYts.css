@@ -1,0 +1,24 @@
+.form-control::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: #c2c2c2;
+  opacity: 1; /* Firefox */
+}
+
+.form-control:-ms-input-placeholder { /* Internet Explorer 10-11 */
+  color: #c2c2c2;
+}
+
+.form-control::-ms-input-placeholder { /* Microsoft Edge */
+  color: #c2c2c2;
+}
+
+.result-row {
+    background-color: rgb(33, 37, 41);
+}
+
+.result-row:hover {
+    background-color: rgb(52, 58, 64);
+}
+
+.result-details-row {
+    background-color: rgb(33, 37, 41);
+}

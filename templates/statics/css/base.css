@@ -1,0 +1,113 @@
+html {
+  position: relative;
+  min-height: 100%;
+}
+body {
+    background-color: black;
+    color: white;
+}
+
+a, a:hover, a:active {
+    color: white;
+    outline: none;
+    cursor: pointer;
+}
+
+.btn:focus, .btn:active {
+    outline: none !important;
+    box-shadow: none;
+}
+
+.glow-on-hover {
+    border: 0px solid #666;
+    border-radius: 5px;
+}
+
+.glow-on-hover:hover {
+    border: 0px solid #07c;
+    box-shadow: 0 0 25px #07c;
+    outline: none;
+}
+
+.div-background {
+    background-repeat: no-repeat;
+    background-size: 100% auto;
+}
+
+.info-panel-title {
+    /*background-color: #2f1fdb;*/
+    /*background-image: linear-gradient(to bottom, rgba(114, 103, 233, 1), rgba(93, 81, 230, 1));*/
+    background-color: #2f1fdb;
+    background-image: linear-gradient(to bottom, rgb(121, 120, 134), rgb(87, 85, 97));
+    padding: 0.3rem 0.3rem 0.3rem 0.5rem;
+    font-size: x-large;
+}
+
+.info-panel-body {
+    font-size: x-large;
+    padding: 0.3rem 0.3rem 0.3rem 0.5rem;
+}
+
+.error-panel-title {
+    background-color: #bb1b1b;
+    background-image: linear-gradient(to bottom, rgba(210, 30, 30, 1), rgba(156, 22, 22, 1));
+    padding: 0.3rem 0.3rem 0.3rem 0.5rem;
+    font-size: x-large;
+}
+
+.error-panel-body {
+    font-size: x-large;
+    padding: 0.3rem 0.3rem 0.3rem 0.5rem;
+}
+
+.movie-mng-body {
+    background-color: rgb(35, 35, 35);
+    position: relative;
+    background-image: linear-gradient(to bottom, rgba(35, 35, 35, 1), rgba(30, 30, 30, 1));
+    padding: 1.0rem 0.3rem 1.0rem 0.5rem;
+    margin-bottom: 1rem;
+}
+
+
+.search-bar {
+    background-color: rgb(33, 37, 41);
+!important;
+    outline: none;
+    color: white;
+    box-shadow: none;
+    font-size: large;
+    width: 30px;
+    border: 1px solid darkslategray;
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
+
+.search-bar:focus {
+    background-color: rgb(33, 37, 41);
+!important;
+    outline: none;
+    border: 1px solid gray;
+    color: white;
+    box-shadow: none;
+    padding-left: 12px;
+}
+
+.default-input {
+    background-color: rgb(33, 37, 41);
+    outline: none;
+    border: none;
+    color: white;
+    box-shadow: none;
+    font-size: x-large;
+    padding-left: 32px;
+}
+
+.default-input:focus {
+    background-color: rgb(33, 37, 41);
+    outline: none;
+    border: none;
+    color: white;
+    box-shadow: none;
+    font-size: x-large;
+    padding-left: 32px;
+}
