@@ -15,10 +15,8 @@ services:
       - static_volume:/app/statics
       - media_volume:/app/media
       - ./data/downloads:/app/data/downloads
-    # env_file is used to manage the env variables of our project
-    env_file:
-      - ./.dockerenv
     environment:
+      - ENV_FILE=.dockerenv
       - UID=1000
       - GID=1000
     depends_on:
@@ -59,8 +57,8 @@ services:
     command: /start-celeryworker
     volumes:
       - .:/app
-    env_file:
-      - ./.dockerenv
+    environment:
+      - ENV_FILE=.dockerenv
     depends_on:
       - redis
 

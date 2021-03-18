@@ -49,9 +49,7 @@ SECRET_KEY: str = os.environ["SECRET_KEY"]
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG: bool = False
 
-ALLOWED_HOSTS: List[str] = [
-    allow for allow in os.environ.get("ALLOWED_URLS", "").split(",")
-]
+ALLOWED_HOSTS: List[str] = os.environ.get("ALLOWED_URLS", "").split(",")
 
 
 # Application definition
