@@ -6,7 +6,9 @@ ignore =
   D203
   E501,
 per-file-ignores =
-    */__init__.py: F401
+    */__init__.py: F401,
+    watch/settings/dev.py: F401 F403,
+    watch/settings/prod.py: F401 F403,
 exclude =
     .git,
     __pycache__,

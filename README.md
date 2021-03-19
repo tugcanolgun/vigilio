@@ -1,5 +1,7 @@
 # Vigilio
 
+[![Build Status](https://travis-ci.com/tugcanolgun/vigilio.svg?token=wQBrWEFpbxZzYvp96hnN&branch=master)](https://travis-ci.com/tugcanolgun/vigilio)
+
 An easy to install, easy to manage personalized streaming service.
 Vigilio lets you easily add and manage movies.
 
