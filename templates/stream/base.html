@@ -3,11 +3,7 @@
 <html lang="en">
 
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta charset="UTF-8">
-    <link rel="shortcut icon" type="image/jpg" href="{% static 'favicon.ico' %}"/>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    {% include 'stream/header.html' %}
     {% block header %}
     {% endblock %}
     <link href="{% static 'css/base.css' %}" rel="stylesheet">
@@ -17,7 +13,7 @@
 <nav class="navbar navbar-expand-sm navbar-expand-lg navbar-dark bg-dark mb-3">
     <div class="container">
         <a class="navbar-brand" href="/">
-            <img src="{% static 'image/w-64.png' %}" alt="" width="32">
+            <img src="{% static 'image/v-64x64.png' %}" alt="" width="32">
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
