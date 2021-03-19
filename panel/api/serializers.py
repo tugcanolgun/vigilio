@@ -3,9 +3,11 @@ from enum import Enum
 from typing import List, Dict, Any, Set
 
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 
 from panel.api.utils import DotenvFilter
 from panel.models import MudSource
+from stream.models import Movie
 
 TORRENT_COMMANDS: List[str] = [
     "pause",
@@ -159,3 +161,22 @@ class MudSourceSerializer(serializers.ModelSerializer):
     class Meta:
         model = MudSource
         exclude = []
+
+
+class RedownloadSubtitlesSerializer(serializers.Serializer):
+    movieIds = serializers.ListField(
+        required=True, child=serializers.IntegerField(required=True)
+    )
+
+    @property
+    def object(self) -> List[str]:
+        return self.validated_data["movieIds"]
+
+    def validate_movieIds(self, ids: List[str]) -> List[str]:
+        for _id in ids:
+            try:
+                Movie.objects.get(id=_id)
+            except Movie.DoesNotExist:
+                raise ValidationError(f"Movie {_id} could not be found.")
+
+        return ids

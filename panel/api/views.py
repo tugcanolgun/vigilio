@@ -29,6 +29,7 @@ from panel.api.serializers import (
     MovieAddSerializer,
     GlobalSettingsSerializer,
     MudSourceSerializer,
+    RedownloadSubtitlesSerializer,
 )
 from panel.api.utils import (
     get_celery_nodes,
@@ -43,6 +44,7 @@ from panel.api.validators import MovieManagementValidation, FilesValidation
 from panel.decorators import check_demo
 from panel.management.commands import superuser
 from panel.models import MudSource
+from panel.tasks import redownload_subtitles
 from panel.tasks.inmemory import set_redis
 from panel.tasks.torrent import get_qbittorrent_client
 from watch.celery import app
@@ -254,3 +256,18 @@ class MudSourceEndpoint(APIView):
             mud_source.delete()
 
         return Response(None, status=HTTP_204_NO_CONTENT)
+
+
+class RedownloadSubtitlesEndpoint(GenericAPIView):
+    serializer_class = RedownloadSubtitlesSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    verbose_request_logging = True
+
+    @check_demo
+    def post(self, request: Request) -> Response:
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        for _id in serializer.object:
+            redownload_subtitles.delay(movie_id=_id)
+
+        return Response({"operation": "started"})

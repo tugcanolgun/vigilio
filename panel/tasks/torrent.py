@@ -12,6 +12,7 @@ from django.conf import settings
 from qbittorrent import Client
 
 from panel.models import MovieTorrent
+from panel.tasks.inmemory import get_setting
 from panel.tasks.subtitles import fetch_subtitles
 from stream.models import Movie, MovieContent
 from panel.tasks.moviedb import download_movie_info
@@ -205,15 +206,11 @@ def _process_videos(
 
 
 def _is_delete_original_files() -> bool:
-    if not hasattr(settings, "DELETE_ORIGINAL_FILES") and not isinstance(
-        settings.DELETE_ORIGINAL_FILES, bool
-    ):
-        logger.error(
-            "DELETE_ORIGINAL_FILES is empty. Set a media folder in the settings."
-        )
-        return False
+    setting: Optional[bool] = get_setting("DELETE_ORIGINAL_FILES")
+    if setting:
+        return setting
 
-    return settings.DELETE_ORIGINAL_FILES
+    return False
 
 
 def _get_media_folder() -> str:

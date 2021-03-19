@@ -53,15 +53,13 @@ const RedownloadSubtitles = () => {
 
   const redownloadSubtitles = () => {
     setInfoMessage('');
+    setErrorMessage('');
     console.log('redownloading...');
-    return;
     axios
       .post(
-        '/panel/api/global-settings',
+        '/panel/api/redownload-subtitles',
         {
-          dotenv: {
-            SUBTITLE_LANGS: selected.length === 0 ? '-' : selected.toString(),
-          },
+          movieIds: selected,
         },
         {
           headers: {
@@ -70,8 +68,7 @@ const RedownloadSubtitles = () => {
         }
       )
       .then((response) => {
-        setInfoMessage('Subtitle language preferences are saved.');
-        setTimeout(() => fetchSettings(), 2000);
+        setInfoMessage('Subtitles are being re-downloaded.');
       })
       .catch((err) => {
         setErrorMessage(getError(err));

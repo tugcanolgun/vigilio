@@ -21,5 +21,10 @@ urlpatterns = [
     path(
         "mud-source/<int:mud_id>", views.MudSourceEndpoint.as_view(), name="mud_source"
     ),
+    path(
+        "redownload-subtitles",
+        views.RedownloadSubtitlesEndpoint.as_view(),
+        name="redownload_subtitles",
+    ),
     path("user/", include("panel.api.user.urls"), name="panel_user"),
 ]
