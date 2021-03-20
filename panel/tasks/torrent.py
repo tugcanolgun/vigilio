@@ -12,12 +12,11 @@ from django.conf import settings
 from qbittorrent import Client
 
 from panel.models import MovieTorrent
-from panel.tasks.inmemory import get_setting
+from panel.tasks.inmemory import get_setting, get_setting_or_environment
+from panel.tasks.moviedb import download_movie_info
 from panel.tasks.subtitles import fetch_subtitles
 from stream.models import Movie, MovieContent
-from panel.tasks.moviedb import download_movie_info
 from watch.celery import app
-
 
 logger = logging.getLogger(__name__)
 
@@ -36,10 +35,7 @@ class VideoDetail:
 
 
 def _get_qbittorrent_url():
-    if not hasattr(settings, "QBITTORRENT_URL") or not settings.QBITTORRENT_URL:
-        raise Exception("QBITTORRENT_URL is not defined in the settings.")
-
-    return settings.QBITTORRENT_URL
+    return get_setting("QBITTORRENT_URL")
 
 
 def get_qbittorrent_client() -> Client:
@@ -50,7 +46,8 @@ def get_qbittorrent_client() -> Client:
         raise Exception("Qbittorrent is not running.")
 
     _login: Optional[str] = client.login(
-        os.environ.get("QBITTORRENT_USERNAME"), os.environ.get("QBITTORRENT_PASSWORD")
+        get_setting_or_environment("QBITTORRENT_USERNAME"),
+        get_setting_or_environment("QBITTORRENT_PASSWORD"),
     )
     if _login is None:
         return client

@@ -1,4 +1,5 @@
 import logging
+import os
 import sys
 from typing import Any, Optional
 
@@ -68,3 +69,11 @@ def set_redis(key: str, value: Any) -> None:
 
     if r:
         r.set(key, value)
+
+
+def get_setting_or_environment(key: str) -> Any:
+    setting: Any = get_setting(key, suppress_errors=True)
+    if setting:
+        return setting
+
+    return os.environ.get(key)
