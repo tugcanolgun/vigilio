@@ -16,6 +16,7 @@
 
 
 # -- Project information -----------------------------------------------------
+import sphinx_rtd_theme
 
 project = "Vigilio"
 copyright = "2021, Tugcan Olgun"
@@ -40,13 +41,17 @@ templates_path = ["_templates"]
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = []
 
+extensions = [
+    "sphinx_rtd_theme",
+]
+
 
 # -- Options for HTML output -------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = "alabaster"
+html_theme = "sphinx_rtd_theme"
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,

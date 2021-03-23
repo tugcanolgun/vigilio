@@ -6,14 +6,14 @@
 Vigilio
 =======
 
-.. warning:: This documentation is not final. Do not rely on the information here.
-
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 4
    :caption: Contents:
 
-   install
+   installation/docker_installation
+   installation/manual_installation
+   installation/after_installation
 
 
 Indices and tables

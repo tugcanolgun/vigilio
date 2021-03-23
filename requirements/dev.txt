@@ -6,6 +6,7 @@ mypy==0.790
 pytest==6.2.1
 pytest-django==4.1.0
 Sphinx==3.4.3
+sphinx-rtd-theme==0.5.1
 pytest-cov==2.11.1
 pytest-mock==3.5.1
 pytest-env==0.6.2
