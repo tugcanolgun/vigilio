@@ -3,7 +3,7 @@ FROM python:3.9-slim-buster
 ENV PYTHONUNBUFFERED 1
 ENV PYTHONDONTWRITEBYTECODE 1
 
-RUN apt-get update && apt-get install -y --no-install-recommends ffmpeg && apt-get install -y --no-install-recommends build-essential
+RUN apt-get update && apt-get install -y --no-install-recommends ffmpeg && apt-get install -y --no-install-recommends build-essential git
 
 # cleaning up unused files
 RUN  apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
