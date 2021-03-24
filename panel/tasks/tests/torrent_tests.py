@@ -73,8 +73,10 @@ class TestGetQbittorrentUrl:
     @pytest.mark.parametrize("qbit", [None, "", []])
     def test_with_incorrect_settings(self, qbit: Any, mocker: MockerFixture) -> None:
         mocker.patch.object(settings, "QBITTORRENT_URL", qbit)
-        with pytest.raises(Exception):
+        with pytest.raises(Exception) as exc:
             _get_qbittorrent_url()
+
+        assert str(exc.value) == "QBITTORRENT_URL could not be found or empty."
 
     def test_with_correct_setting(self, mocker: MockerFixture) -> None:
         qbit_test: str = "http://localhost"

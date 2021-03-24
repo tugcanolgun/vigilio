@@ -2,12 +2,13 @@ import logging
 from typing import Dict, Optional
 
 from django.db.models import QuerySet, Q
-from rest_framework import status, permissions
+from rest_framework import status
 from rest_framework.generics import GenericAPIView
 from rest_framework.request import Request
 from rest_framework.response import Response
 
 from panel.api.handlers import MoviesEndpointHandler
+from panel.decorators import DemoOrIsAuthenticated
 from stream.api.handlers import SaveCurrentSecondHandler
 from stream.api.serializers import (
     MovieSerializer,
@@ -25,7 +26,7 @@ logger = logging.getLogger(__name__)
 
 class ContinueMoviesEndpoint(GenericAPIView):
     serializer_class = UserMovieHistorySerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DemoOrIsAuthenticated]
     verbose_request_logging = True
 
     def get(self, request: Request) -> Response:
@@ -62,7 +63,7 @@ class ContinueMoviesEndpoint(GenericAPIView):
 
 class MoviesEndpoint(GenericAPIView):
     serializer_class = MoviesEndpointSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DemoOrIsAuthenticated]
     verbose_request_logging = True
 
     def get(self, request: Request) -> Response:
@@ -119,8 +120,7 @@ class SaveCurrentSecondEndpoint(GenericAPIView):
     serializer_class = SaveCurrentSecondSerializer
     validator_class = SaveCurrentSecondValidator
     handler_class = SaveCurrentSecondHandler
-
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DemoOrIsAuthenticated]
     verbose_request_logging = True
 
     def post(self, request: Request) -> Response:
@@ -143,7 +143,7 @@ class SaveCurrentSecondEndpoint(GenericAPIView):
 
 class CategoriesEndpoint(GenericAPIView):
     serializer_class = CategoriesWithMoviesSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DemoOrIsAuthenticated]
     verbose_request_logging = True
 
     def get(self, request: Request) -> Response:

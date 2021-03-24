@@ -1,7 +1,7 @@
 import datetime
 import json
 import logging
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 
 import requests
 
@@ -13,7 +13,11 @@ logger = logging.getLogger(__name__)
 
 
 def _get_moviedb_api_key() -> str:
-    return get_setting("MOVIEDB_API")
+    moviedb: Optional[str] = get_setting("MOVIEDB_API")
+    if not moviedb:
+        raise Exception("MOVIEDB_API could not be found or empty.")
+
+    return moviedb
 
 
 def _get_response_from_moviedb_api(url: str) -> Dict[str, Any]:

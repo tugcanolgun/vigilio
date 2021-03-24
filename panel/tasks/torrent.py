@@ -34,8 +34,12 @@ class VideoDetail:
     raw: Dict[str, List[Dict[str, Any]]]
 
 
-def _get_qbittorrent_url():
-    return get_setting("QBITTORRENT_URL")
+def _get_qbittorrent_url() -> str:
+    url: Optional[str] = get_setting("QBITTORRENT_URL")
+    if not url:
+        raise Exception("QBITTORRENT_URL could not be found or empty.")
+
+    return url
 
 
 def get_qbittorrent_client() -> Client:

@@ -7,7 +7,7 @@ from celery.app.control import Inspect
 from django.conf import settings
 from django.contrib.auth.models import User
 from qbittorrent import Client
-from rest_framework import status, permissions, generics
+from rest_framework import status, generics
 from rest_framework.exceptions import APIException, NotFound
 from rest_framework.generics import GenericAPIView
 from rest_framework.request import Request
@@ -41,7 +41,7 @@ from panel.api.utils import (
     DotenvFilter,
 )
 from panel.api.validators import MovieManagementValidation, FilesValidation
-from panel.decorators import check_demo
+from panel.decorators import check_demo, DemoOrIsAuthenticated
 from panel.management.commands import superuser
 from panel.models import MudSource
 from panel.tasks import redownload_subtitles
@@ -55,7 +55,7 @@ logger = logging.getLogger(__name__)
 class TorrentEndpoint(GenericAPIView):
     serializer_class = TorrentSerializer
     handler_class = TorrentProcessHandler
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DemoOrIsAuthenticated]
     verbose_request_logging = True
 
     def get(self, request: Request) -> Response:
@@ -85,7 +85,7 @@ class TorrentEndpoint(GenericAPIView):
 
 class CeleryEndpoint(GenericAPIView):
     serializer_class = CelerySerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DemoOrIsAuthenticated]
     verbose_request_logging = True
 
     def get(self, request: Request) -> Response:
@@ -135,7 +135,7 @@ class FilesEndpoint(GenericAPIView):
     serializer_class = FilesSerializer
     validator_class = FilesValidation
     handler_class = FilesHandler
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DemoOrIsAuthenticated]
     verbose_request_logging = True
 
     def get(self, request: Request) -> Response:
@@ -164,7 +164,7 @@ class MovieManagementEndpoint(GenericAPIView):
     serializer_class = MovieManagementSerializer
     validator_class = MovieManagementValidation
     handler_class = MovieManagementHandler
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DemoOrIsAuthenticated]
     verbose_request_logging = True
 
     @check_demo
@@ -185,7 +185,7 @@ class MovieManagementEndpoint(GenericAPIView):
 
 class MovieAddEndpoint(GenericAPIView):
     serializer_class = MovieAddSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DemoOrIsAuthenticated]
     verbose_request_logging = True
 
     @check_demo
@@ -202,7 +202,7 @@ class MovieAddEndpoint(GenericAPIView):
 
 class GlobalSettingsEndpoint(GenericAPIView):
     serializer_class = GlobalSettingsSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DemoOrIsAuthenticated]
     verbose_request_logging = True
 
     def get(self, request: Request) -> Response:
@@ -236,7 +236,8 @@ class GlobalSettingsEndpoint(GenericAPIView):
 class MudSourcesList(generics.ListCreateAPIView):
     queryset = MudSource.objects.all()
     serializer_class = MudSourceSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DemoOrIsAuthenticated]
+    verbose_request_logging = True
 
     @check_demo
     def perform_create(self, serializer: MudSourceSerializer) -> None:
@@ -244,7 +245,8 @@ class MudSourcesList(generics.ListCreateAPIView):
 
 
 class MudSourceEndpoint(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DemoOrIsAuthenticated]
+    verbose_request_logging = True
 
     @check_demo
     def delete(self, request: Request, mud_id: int) -> Response:
@@ -260,7 +262,7 @@ class MudSourceEndpoint(APIView):
 
 class RedownloadSubtitlesEndpoint(GenericAPIView):
     serializer_class = RedownloadSubtitlesSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DemoOrIsAuthenticated]
     verbose_request_logging = True
 
     @check_demo

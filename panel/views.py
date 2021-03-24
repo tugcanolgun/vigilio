@@ -1,21 +1,25 @@
 import logging
 from typing import Dict, List
 
-from django.contrib.auth.decorators import login_required
 from django.core.handlers.wsgi import WSGIRequest
 from django.db.models import QuerySet
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 
 from panel.api.utils import is_qbittorrent_running, is_redis_online, is_celery_running
-from panel.decorators import setup_required, check_background, check_settings
+from panel.decorators import (
+    setup_required,
+    check_background,
+    check_settings,
+    demo_or_login_required,
+)
 from panel.handlers import get_installation_status
 from stream.models import Movie
 
 logger = logging.getLogger(__name__)
 
 
-@login_required
+@demo_or_login_required
 @check_settings
 def setup_panel(request: WSGIRequest) -> HttpResponse:
     commands: Dict[str, List[str]] = get_installation_status()
@@ -23,7 +27,7 @@ def setup_panel(request: WSGIRequest) -> HttpResponse:
     return render(request, "panel/setup.html", context={"commands": commands})
 
 
-@login_required
+@demo_or_login_required
 @setup_required
 @check_settings
 def index(request: WSGIRequest) -> HttpResponse:
@@ -32,7 +36,7 @@ def index(request: WSGIRequest) -> HttpResponse:
     return render(request, "panel/index.html", context={"movies": movies})
 
 
-@login_required
+@demo_or_login_required
 @setup_required
 @check_background
 @check_settings
@@ -40,14 +44,14 @@ def add_movie(request: WSGIRequest) -> HttpResponse:
     return render(request, "panel/add_movie.html")
 
 
-@login_required
+@demo_or_login_required
 @setup_required
 @check_settings
 def background_management(request: WSGIRequest) -> HttpResponse:
     return render(request, "panel/background_management.html")
 
 
-@login_required
+@demo_or_login_required
 @setup_required
 @check_settings
 def background_processes(request: WSGIRequest) -> HttpResponse:
@@ -72,24 +76,24 @@ def background_processes(request: WSGIRequest) -> HttpResponse:
     )
 
 
-@login_required
+@demo_or_login_required
 @setup_required
 @check_settings
 def movie_detail(request: WSGIRequest, movie_id: int) -> HttpResponse:
     return render(request, "panel/movie_detail.html", context={"movie_id": movie_id})
 
 
-@login_required
+@demo_or_login_required
 @check_settings
 def user_history(request: WSGIRequest) -> HttpResponse:
     return render(request, "panel/user_history.html")
 
 
-@login_required
+@demo_or_login_required
 def settings(request: WSGIRequest) -> HttpResponse:
     return render(request, "panel/settings.html")
 
 
-@login_required
+@demo_or_login_required
 def initial_setup(request: WSGIRequest) -> HttpResponse:
     return render(request, "panel/initial_setup.html")

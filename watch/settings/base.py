@@ -65,6 +65,7 @@ INSTALLED_APPS: List[str] = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django_extensions",
+    "lazysignup",
 ]
 
 REST_FRAMEWORK: Dict[str, Any] = {
@@ -120,8 +121,10 @@ DATABASES: Dict[str, Dict[str, str]] = {
 }
 
 
-# Password validation
-# https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
+AUTHENTICATION_BACKENDS: List[str] = [
+    "django.contrib.auth.backends.ModelBackend",
+    "lazysignup.backends.LazySignupBackend",
+]
 
 AUTH_PASSWORD_VALIDATORS: List[Dict[str, str]] = [
     {

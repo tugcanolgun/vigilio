@@ -47,18 +47,27 @@ def process_result(key: str, result: bytes) -> Any:
         return result
 
 
-def get_setting(key: str, suppress_errors: bool = False) -> Any:
+def get_redis_key(key: str) -> Any:
     r: Optional[redis.Redis] = get_redis()
 
     if r:
-        result: Optional[bytes] = r.get(key)
-        if result:
-            return process_result(key, result)
+        return r.get(key)
+
+
+def del_redis_key(key: str) -> Any:
+    r: Optional[redis.Redis] = get_redis()
+
+    if r:
+        return r.delete(key)
+
+
+def get_setting(key: str, suppress_errors: bool = False) -> Any:
+    result: Optional[bytes] = get_redis_key(key)
+    if result:
+        return process_result(key, result)
 
     if hasattr(settings, key):
-        result: Any = getattr(settings, key)
-        if result:
-            return result
+        return getattr(settings, key)
 
     if not suppress_errors:
         raise Exception(f"{key} could not be found or empty.")

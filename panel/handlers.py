@@ -1,9 +1,8 @@
 import logging
 from typing import Dict, List
 
-from django.conf import settings
-
 from panel.api.utils import get_dotenv_values
+from panel.tasks.inmemory import get_setting
 from panel.tasks.setup_panel import is_command_installed
 
 logger = logging.getLogger(__name__)
@@ -33,8 +32,9 @@ def get_installation_status() -> Dict[str, List[str]]:
 
 
 def is_demo() -> bool:
-    if hasattr(settings, "DEMO") and isinstance(settings.DEMO, bool):
-        return settings.DEMO
+    demo: bool = get_setting("DEMO")
+    if demo:
+        return demo
 
     return False
 

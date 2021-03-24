@@ -2,33 +2,32 @@ import logging
 from pathlib import Path
 from typing import List, Dict, Optional
 
-from django.contrib.auth.decorators import login_required
 from django.core.handlers.wsgi import WSGIRequest
 from django.db.models import QuerySet
 from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import render
 from django.urls import reverse
 
-from panel.decorators import check_settings
+from panel.decorators import check_settings, demo_or_login_required
 from stream.handlers import _get_url, _get_quality_string
 from stream.models import MovieContent, Movie, UserMovieHistory
 
 logger = logging.getLogger(__name__)
 
 
-@login_required
+@demo_or_login_required
 @check_settings
 def index(request: WSGIRequest) -> HttpResponse:
     return render(request, "stream/index.html")
 
 
-@login_required
+@demo_or_login_required
 @check_settings
 def categories(request: WSGIRequest) -> HttpResponse:
     return render(request, "stream/categories.html")
 
 
-@login_required
+@demo_or_login_required
 @check_settings
 def watch(request: WSGIRequest, movie_id: int) -> HttpResponse:
     movie: Movie = Movie.objects.get(id=movie_id)
@@ -50,7 +49,9 @@ def watch(request: WSGIRequest, movie_id: int) -> HttpResponse:
             ),
             "is_ready": movie_content.is_ready,
             "quality": _get_quality_string(movie_content.resolution_width),
-            "suffix": movie_content.file_extension.replace(".", ""),
+            "suffix": movie_content.file_extension.replace(".", "")
+            if movie_content.file_extension is not None
+            else "",
         }
         for movie_content in movie_contents
     ]
@@ -76,7 +77,7 @@ def watch(request: WSGIRequest, movie_id: int) -> HttpResponse:
     return render(request, "stream/watch.html", context)
 
 
-@login_required
+@demo_or_login_required
 @check_settings
 def search(request: WSGIRequest) -> HttpResponse:
     return render(request, "stream/search.html")

@@ -14,13 +14,20 @@ class SaveCurrentSecondHandler:
     def handle(
         self, save_current_second: SaveCurrentSecond, user: User
     ) -> Dict[str, bool]:
-        is_watched: bool = False
-        if (
-            save_current_second.remaining_seconds != 0
-            and save_current_second.remaining_seconds < 300
-        ):
-            is_watched = True
+        is_watched: bool = self.check_is_watched(
+            save_current_second=save_current_second
+        )
 
+        self.save_regular_user(
+            save_current_second=save_current_second, user=user, is_watched=is_watched
+        )
+
+        return {"saveCurrentSecond": True}
+
+    @staticmethod
+    def save_regular_user(
+        save_current_second: SaveCurrentSecond, user: User, is_watched: bool
+    ) -> None:
         try:
             user_history: UserMovieHistory = UserMovieHistory.objects.get(
                 user=user, movie=Movie.objects.get(id=save_current_second.movie_id)
@@ -42,4 +49,18 @@ class SaveCurrentSecondHandler:
         user_history.is_watched = is_watched
         user_history.save()
 
-        return {"saveCurrentSecond": True}
+    @staticmethod
+    def check_is_watched(save_current_second: SaveCurrentSecond) -> bool:
+        if save_current_second.remaining_seconds != 0:
+            return True
+
+        total: int = (
+            save_current_second.current_second + save_current_second.remaining_seconds
+        )
+        if total < 240:
+            return True
+
+        if save_current_second.current_second / total > 0.916:
+            return True
+
+        return False
