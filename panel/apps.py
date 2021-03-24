@@ -23,7 +23,9 @@ def process_demo_setting() -> None:
 
     try:
         if bool(redis_demo) is demo:
-            logger.debug("redis and environment DEMO values match. No action is necessary.")
+            logger.debug(
+                "redis and environment DEMO values match. No action is necessary."
+            )
             return
     except Exception:
         pass

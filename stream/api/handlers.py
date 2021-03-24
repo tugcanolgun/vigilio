@@ -51,13 +51,19 @@ class SaveCurrentSecondHandler:
 
     @staticmethod
     def check_is_watched(save_current_second: SaveCurrentSecond) -> bool:
-        if save_current_second.remaining_seconds != 0:
+        if not save_current_second.remaining_seconds:
+            return False
+
+        if (
+            save_current_second.current_second > 0
+            and save_current_second.remaining_seconds != 0
+        ):
             return True
 
-        total: int = (
+        total: float = (
             save_current_second.current_second + save_current_second.remaining_seconds
         )
-        if total < 240:
+        if total < 240.0:
             return True
 
         if save_current_second.current_second / total > 0.916:
