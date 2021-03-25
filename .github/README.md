@@ -5,12 +5,12 @@ An easy to install, easy to manage personalized streaming service.
 ## 📺 Demo
 
 You can find a live demo with limited functionality here:\
-[demo.vigilio.tugcan.net/](https://demo.vigilio.tugcan.net/)
+[demo.vigilio.tugcan.net](https://demo.vigilio.tugcan.net/)
 
 ## 📄 Installation & Documentation
 
 Head to documentation to find the instructions on how to install.
-[docs.vigilio.tugcan.net/](https://docs.vigilio.tugcan.net/)
+[docs.vigilio.tugcan.net](https://docs.vigilio.tugcan.net/)
 
 ## 🔥 Quick Installation
 
@@ -28,11 +28,11 @@ Default password: `adminadmin`
 
 ## ✨ Screenshots
 
-![Main page](./docs/source/images/main-low.jpg "Main page")
+![main page](https://user-images.githubusercontent.com/18149492/112493302-5407e300-8d82-11eb-8966-12a4757dc043.jpg)
 
-![Movie details page](./docs/source/images/movie-details-low.jpg "Movie details page")
+![movie details page](https://user-images.githubusercontent.com/18149492/112493319-58340080-8d82-11eb-86f8-d29f8b49cb90.jpg)
 
-![Search page](./docs/source/images/search-low.jpg "Search page")
+![search page](https://user-images.githubusercontent.com/18149492/112493327-59fdc400-8d82-11eb-93f1-990459f3fd48.jpg)
 
 ## 👍 Features
 
