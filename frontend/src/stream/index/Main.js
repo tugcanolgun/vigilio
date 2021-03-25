@@ -120,7 +120,7 @@ const Main = () => {
   };
 
   const renderPopularMovies = () => {
-    if (fetched && movieDetails.length === 0) return <NoMovies />;
+    if (fetched && movieDetails.length === 0 && continueMovieIds.length === 0) return <NoMovies />;
 
     if (movieDetails.length === 0) return;
 

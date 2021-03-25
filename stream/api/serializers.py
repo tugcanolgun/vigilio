@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from enum import Enum
+from typing import Dict, Any
 
 from rest_framework import serializers
 
@@ -65,11 +66,28 @@ class MyListSerializer(serializers.ModelSerializer):
 
 class MovieSerializer(serializers.ModelSerializer):
     movie_content = MovieContentSerializer(many=True, read_only=True)
-    my_list = MyListSerializer()
+    my_list = serializers.SerializerMethodField(source="get_my_list")
+
+    def __init__(self, *args, **kwargs):
+        if kwargs.get("user"):
+            self.user = kwargs.pop("user")
+        super().__init__(*args, **kwargs)
 
     class Meta:
         model = Movie
         exclude = ("media_info_raw",)
+
+    def get_my_list(self, data) -> Dict[str, Any]:
+        if hasattr(self, "user"):
+            user_list: MyList = MyList.objects.filter(movie=data).filter(user=self.user)
+            if not user_list:
+                return None
+
+            my_list: MyListSerializer = MyListSerializer(user_list)
+        else:
+            my_list: MyListSerializer = MyListSerializer(data)
+
+        return my_list.data
 
 
 class CategoriesWithMoviesSerializer(serializers.ModelSerializer):

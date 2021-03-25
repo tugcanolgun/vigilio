@@ -92,11 +92,11 @@ class MoviesEndpoint(GenericAPIView):
                 .all()
             )
 
-        serialized_locations = MovieSerializer(movies, many=True)
+        serialized_movies = MovieSerializer(movies, user=request.user, many=True)
 
         return Response(
             {
-                "movies": serialized_locations.data,
+                "movies": serialized_movies.data,
                 "relative_watch_path": _get_relative_path_to_watch(),
             },
             status=status.HTTP_200_OK,

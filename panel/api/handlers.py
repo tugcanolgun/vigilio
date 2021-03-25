@@ -359,9 +359,7 @@ class MoviesEndpointHandler:
                 else:
                     existing.delete()
 
-            my_list: MyList = MyList.objects.create(movie=movie, user=user)
-            movie.my_list = my_list
-            movie.save()
+            MyList.objects.create(movie=movie, user=user)
 
             return f"{movie.title} has been added to your list."
 
