@@ -1,4 +1,4 @@
-# Vigilio [![Build Status](https://travis-ci.com/tugcanolgun/vigilio.svg?token=wQBrWEFpbxZzYvp96hnN&branch=master)](https://travis-ci.com/tugcanolgun/vigilio)
+# Vigilio [![Build Status](https://travis-ci.com/tugcanolgun/vigilio.svg?token=wQBrWEFpbxZzYvp96hnN&branch=master)](https://travis-ci.com/tugcanolgun/vigilio) [![Documentation Status](https://readthedocs.org/projects/vigilio/badge/?version=latest)](https://docs.vigilio.tugcan.net/en/latest/?badge=latest)
 
 An easy to install, easy to manage personalized streaming service.
 
@@ -49,5 +49,5 @@ Default password: `adminadmin`
 
 ## ❤ License
 
-![GitHub](https://img.shields.io/github/license/tugcanolgun/vigilio)
+![MIT License](https://img.shields.io/badge/license-MIT-green)
 
