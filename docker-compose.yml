@@ -12,8 +12,7 @@ services:
     # so if we change code on the host, code in the docker container will also be changed
     volumes:
       - .:/app
-      - static_volume:/app/statics
-      - media_volume:/app/media
+      - ./statics:/app/statics
       - ./data/downloads:/app/data/downloads
     environment:
       - ENV_FILE=.dockerenv
@@ -27,8 +26,7 @@ services:
       - 8000:80
     volumes:
       - ./compose/production/nginx:/etc/nginx/conf.d
-      - static_volume:/app/statics
-      - media_volume:/app/media
+      - ./statics:/app/statics
       - ./data/downloads:/app/data/downloads
     depends_on:
       - web
@@ -61,7 +59,3 @@ services:
       - ENV_FILE=.dockerenv
     depends_on:
       - redis
-
-volumes:
-  static_volume:
-  media_volume:
