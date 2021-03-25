@@ -62,6 +62,10 @@ run: activate
 	@echo "Running the server"
 	@${VENV}/python ${ROOT_DIR}/manage.py runserver
 
+install:
+	@echo "Initiating node server..."
+	yarn --cwd ${ROOT_DIR}/frontend install
+
 start:
 	@echo "Initiating node server..."
 	yarn --cwd ${ROOT_DIR}/frontend start

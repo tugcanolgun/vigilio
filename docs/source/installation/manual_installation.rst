@@ -176,6 +176,7 @@ Paste the following and change the user and paths,
 
 ``systemctl enable vigilio.service``
 
+``sudo mkdir -p /var/log/celery && chown -R ${USER}:${USER} /var/log/celery``
 
 Setting up systemd for celery
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

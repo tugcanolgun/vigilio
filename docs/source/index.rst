@@ -14,6 +14,7 @@ Vigilio
    installation/docker_installation
    installation/manual_installation
    installation/after_installation
+   development/development
 
 
 Indices and tables
