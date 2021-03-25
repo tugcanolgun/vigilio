@@ -108,11 +108,24 @@ class CategoriesWithMoviesSerializer(serializers.ModelSerializer):
 
 
 class UserMovieHistorySerializer(serializers.ModelSerializer):
-    movie = MovieSerializer(read_only=True)
+    movie = serializers.SerializerMethodField(source="get_movie")
+
+    def __init__(self, *args, **kwargs):
+        if kwargs.get("user"):
+            self.user = kwargs.pop("user")
+        super().__init__(*args, **kwargs)
 
     class Meta:
         model = UserMovieHistory
         exclude = ("id",)
+
+    def get_movie(self, data) -> Dict[str, Any]:
+        if hasattr(self, "user"):
+            movie = MovieSerializer(data.movie, user=self.user, read_only=True)
+        else:
+            movie = MovieSerializer(data.movie, read_only=True)
+
+        return movie.data
 
 
 class SaveCurrentSecondSerializer(serializers.Serializer):

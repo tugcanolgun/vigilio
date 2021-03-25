@@ -50,7 +50,9 @@ class ContinueMoviesEndpoint(GenericAPIView):
                 .all()
             )
 
-        serialized_locations = self.get_serializer(user_history, many=True)
+        serialized_locations = self.get_serializer(
+            user_history, user=request.user, many=True
+        )
 
         return Response(
             {
