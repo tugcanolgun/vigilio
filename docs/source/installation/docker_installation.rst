@@ -32,4 +32,35 @@ You can change the default port ``8000`` by changing the port value under ``ngin
 Running docker behind nginx
 ---------------------------
 
-It is recommended that you run docker behind nginx. Assuming
+It is recommended that you run docker behind nginx.
+
+``sudo touch /etc/nginx/site-available/example.com`` # Change ``example.com`` with your domain
+
+``sudo ln -s /etc/nginx/site-available/example.com /etc/nginx/site-enabled/example.com``
+
+``sudo nano /etc/nginx/site-enabled/example.com`` or ``sudo vim /etc/nginx/site-enabled/example.com``
+
+.. code-block:: bash
+
+    server {
+        root /var/www/html;
+        index index.html index.htm index.nginx-debian.html;
+
+        server_name example.com;  # Change this with your domain
+
+        location / {
+            #try_files $uri $uri/ =404;
+            include proxy_params;
+            proxy_pass http://localhost:8000;  # Default is port 8000, change if necessary
+        }
+
+        location /static/ {
+            alias /home/user/vigilio/statics/; # Change this according to your installation
+        }
+    }
+
+| Check nginx configuration
+| ``sudo nginx -t``
+
+| If there are no errors:
+| ``sudo nginx -s reload``

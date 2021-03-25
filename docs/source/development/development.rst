@@ -7,9 +7,15 @@ Requirements
 ::
 
     python3.6+
-    redis
+    python3-venv
+    git
+    redis-server
     yarn
     make
+
+    # Optional
+    ffmpeg
+    qbittorrent or qbittorrent-nox
 
 
 Backend Installation
@@ -23,12 +29,28 @@ you can change it in ``.env`` file under ``CELERY_BROKER_URL`` and ``CELERY_RESU
 
 You need to restart vigilio/celery when you change these settings.
 
-Getting and running repo
-^^^^^^^^^^^^^^^^^^^^^^^^
+Running vigilio
+^^^^^^^^^^^^^^^
 
-``git clone https://github.com/tugcanolgun/vigilio.git``
+| If you are going to create a pull request and contribute to the project, fork the project and clone your project instead.
+| ``git clone https://github.com/tugcanolgun/vigilio.git``
 
 ``cd vigilio``
+
+``git checkout dev``
+
+**Create your branch**
+
+.. list-table::
+   :widths: 20 80
+   :header-rows: 1
+
+   * - Type
+     - Example
+   * - feature/your_feature
+     - ``git checkout -b feature/your_feature``
+   * - fix/your_fix
+     - ``git checkout -b feature/your_fix``
 
 ``python3.x -m venv venv && source venv/bin/activate``
 
@@ -48,11 +70,19 @@ Running celery
 Frontend Installation
 ---------------------
 
+You need to have ``yarn`` installed on your system. You can install the dependencies with:
+
 ``make install``
 
-To run webpack in development mode:
+Development mode
+^^^^^^^^^^^^^^^^
 
 ``make start``
+
+Your changes should reflect on the page when you refresh the page you are working on.
+
+Production mode
+^^^^^^^^^^^^^^^
 
 To run webpack in production mode and minimize bundles:
 

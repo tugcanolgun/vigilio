@@ -25,7 +25,8 @@ your newly created password.
 2. Setting up MovieDB connection
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The next page will ask you to paste your MovieDB API key. You can `click here <https://developers.themoviedb.org/3/getting-started/introduction>`_
+The next page will ask you to paste your MovieDB API key. You can
+`click here <https://developers.themoviedb.org/3/getting-started/introduction>`_
 to see the instructions on how to get your API key. After creating your key, copy it and paste it
 to the initial setup page of your Vigilio. The system will try checking if the entered API key works.
 Upon success, you will be redirected to the next screen.
@@ -61,7 +62,7 @@ button. Return back to Vigilio and paste it to `*Copy the source` input. You can
 you want. Provided that the name is less than 50 characters.
 
 This process seems to require several steps but you will most likely have to do this only once. After creating
-a new source. You can head to `Manage` -> `Add Movie`. Now you can search movies by title (or whatever the
+a new source. You can head to **Manage -> Add Movie**. Now you can search movies by title (or whatever the
 source allows you to search with).
 
 Change qbittorrent password
@@ -73,11 +74,18 @@ when there is no torrent activity. Head over to ``http://localhost:8080`` and lo
 | Username ``admin``
 | Password ``adminadmin``
 
-Head to `Tools` -> `Options...` -> `Web UI` and enter a new password to the input area `Password` and scroll
-down to the bottom and click `Save`.
+Head to **Tools -> Options... -> Web UI** and enter a new password to the input area `Password` and scroll
+down to the bottom and click **Save**.
 
-After changing the password, head over to Vigilio. `Manage` -> `Settings` -> `Environment Settings` and
+After changing the password, head over to Vigilio. **Manage -> Settings -> Environment Settings** and
 change `QBITTORRENT_PASSWORD`.
 
 This should make things a tad bit safer. However, it is highly recommended that you block 8080 port so it is
 only available on your server/computer and not to the outside world.
+
+Using VPN
+---------
+
+| Using a VPN is highly encouraged. You can either run a VPN connection server wide or you can set SOCKET5 at
+    qbittorrent settings:
+| **Tools -> Options... -> Connection -> Proxy Server**
