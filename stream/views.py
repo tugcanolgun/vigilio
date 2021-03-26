@@ -69,7 +69,9 @@ def watch(request: WSGIRequest, movie_id: int) -> HttpResponse:
         "poster": movie_contents[0].movie_set.first().backdrop_path_big,
         "save_current_second_api_path": reverse("stream:save_current_second"),
         "movie": movie,
-        "start_from": 0 if user_history is None else user_history.current_second,
+        "start_from": 0
+        if user_history is None or user_history.is_watched
+        else user_history.current_second,
         "HTTP_REFERER": request.META.get("HTTP_REFERER", ""),
     }
     logger.info(request.META.get("HTTP_REFERER", "NOPE"))

@@ -1,6 +1,8 @@
 # Vigilio [![Build Status](https://travis-ci.com/tugcanolgun/vigilio.svg?token=wQBrWEFpbxZzYvp96hnN&branch=master)](https://travis-ci.com/tugcanolgun/vigilio) [![Documentation Status](https://readthedocs.org/projects/vigilio/badge/?version=latest)](https://docs.vigilio.tugcan.net/en/latest/?badge=latest)
 
-An easy to install, easy to manage personalized streaming service.
+Your own movie streaming service. Easy to install, easy to use.
+Download, manage and watch your favorite movies conveniently from your browser or phone.
+Install it on your server, access it anywhere and enjoy.
 
 ## 📺 Demo
 
@@ -9,7 +11,7 @@ You can find a live demo with limited functionality here:\
 
 ## 📄 Installation & Documentation
 
-Head to documentation to find the instructions on how to install.
+Head to the documentation to find the instructions on how to install here:\
 [docs.vigilio.tugcan.net](https://docs.vigilio.tugcan.net/)
 
 ## 🔥 Quick Installation
@@ -37,10 +39,11 @@ Default password: `adminadmin`
 ## 👍 Features
 
 * Easy to install.
-* Automated movie info, image, genre, subtitle fetching.
+* Automated movie info, imdb score, image, genre, subtitle downloading.
 * Continue movie feature.
 * My list feature that you can add and remove your movies.
 * Fully featured video player with subtitle and video quality options.
+* Video player supports PIP (Picture in picture) feature.
 * Search movies via different sources and add them with one click.
 * Add movies manually by providing a source and imdb ID.
 * Control background processes.

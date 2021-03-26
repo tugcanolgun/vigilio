@@ -19,7 +19,9 @@ Questions & Feature Requests
 ----------------------------
 
 Feel free to `open a ticket <https://github.com/tugcanolgun/vigilio/issues/new>`_ with your question. Feature requests are also welcome. Describe the feature, why you need it, and how it should work. Please provide as much detail and context as possible.
-🐛 File a Bug
+
+File a Bug
+----------
 
 In case you've encountered a bug, please make sure:
 
@@ -43,7 +45,8 @@ Pull requests are welcome! If you never created a pull request before, here are 
 Development
 -----------
 
-    * Follow instructions for how to run vigilio for development `here <./development.html>`_.
+    * Fork this project.
+    * Follow instructions for how to run Vigilio for development `here <./development.html>`_.
     * Make sure you added tests to your contribution.
     * Make sure you run the following linters, formatters and test:
 
