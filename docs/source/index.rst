@@ -6,7 +6,9 @@
 Vigilio
 =======
 
-An easy to install, easy to manage personalized streaming service.
+Your own movie streaming service. Easy to install, easy to use.
+Download, manage and watch your favorite movies conveniently from your browser or phone.
+Install it on your server, access it anywhere and enjoy.
 
 | You can find the landing page `here <https://vigilio.tugcan.net/>`_.
 | `Live demo <https://demo.vigilio.tugcan.net/>`_
@@ -22,6 +24,7 @@ An easy to install, easy to manage personalized streaming service.
    usage/how_to_use
    development/development
    development/contributing
+   roadmap/known_issues
 
 
 Indices and tables

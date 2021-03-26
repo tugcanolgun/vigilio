@@ -1,6 +1,8 @@
 # Vigilio [![Build Status](https://travis-ci.com/tugcanolgun/vigilio.svg?token=wQBrWEFpbxZzYvp96hnN&branch=master)](https://travis-ci.com/tugcanolgun/vigilio) [![Documentation Status](https://readthedocs.org/projects/vigilio/badge/?version=latest)](https://docs.vigilio.tugcan.net/en/latest/?badge=latest)
 
-An easy to install, easy to manage personalized streaming service.
+Your own movie streaming service. Easy to install, easy to use.
+Download, manage and watch your favorite movies conveniently from your browser or phone.
+Install it on your server, access it anywhere and enjoy.
 
 ## 📺 Demo
 
