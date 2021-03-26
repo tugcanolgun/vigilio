@@ -13,7 +13,8 @@
 <div style="width: 100%; height: 100%;">
     <div id="backButton" onclick="backButtonFunc()"
          style="position: absolute; margin-left: 2%; margin-top: 2%; z-index: 10; cursor: pointer;">
-        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-arrow-left back-button"
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor"
+             class="bi bi-arrow-left back-button"
              viewBox="0 0 16 16">
             <path fill-rule="evenodd"
                   d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"></path>
@@ -126,10 +127,14 @@
 
   var httpReferer = '{{ HTTP_REFERER }}';
   var mouse = {x: -1, y: -1};
+  var touch = false;
   var lastMouse = {x: -2, y: -2};
   var backButton = document.getElementById('backButton');
+  var playerDiv = document.getElementById("my-video");
+  playerDiv.addEventListener('touchstart', function(ev) {backButton.style.display = 'block'; touch=true;}, false);
+  playerDiv.addEventListener('touchend', function(ev) {setTimeout(() => {backButton.style.display = 'none';}, 4000)}, false);
   setInterval(function () {
-      if (player && !player.paused() && JSON.stringify(mouse) === JSON.stringify(lastMouse)) {
+      if (player && !player.paused() && JSON.stringify(mouse) === JSON.stringify(lastMouse) && touch === false) {
         backButton.style.display = 'none';
       } else {
         lastMouse.x = mouse.x;
