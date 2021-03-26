@@ -37,10 +37,11 @@ Default password: `adminadmin`
 ## 👍 Features
 
 * Easy to install.
-* Automated movie info, image, genre, subtitle fetching.
+* Automated movie info, imdb score, image, genre, subtitle fetching.
 * Continue movie feature.
 * My list feature that you can add and remove your movies.
 * Fully featured video player with subtitle and video quality options.
+* Video player supports PIP (Picture in picture) feature.
 * Search movies via different sources and add them with one click.
 * Add movies manually by providing a source and imdb ID.
 * Control background processes.
