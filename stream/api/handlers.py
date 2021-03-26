@@ -51,14 +51,18 @@ class SaveCurrentSecondHandler:
 
     @staticmethod
     def check_is_watched(save_current_second: SaveCurrentSecond) -> bool:
+        if save_current_second.current_second == 0:
+            return False
         # User history only keeps tract continue movie feature.
         # When implementing true history feature, adjust this.
-        # total: float = (
-        #     save_current_second.current_second + save_current_second.remaining_seconds
-        # )
-        # if total < 240.0:
-        #     return True
-        #
-        # if save_current_second.current_second / total > 0.916:
-        #     return True
+        ratio: float = 0.9
+        total: int = (
+            save_current_second.current_second + save_current_second.remaining_seconds
+        )
+        if total < 360.0:
+            ratio = 0.6
+
+        if (save_current_second.current_second / total) > ratio:
+            return True
+
         return False
