@@ -11,7 +11,7 @@ You can find a live demo with limited functionality here:\
 
 ## 📄 Installation & Documentation
 
-Head to documentation to find the instructions on how to install.
+Head to the documentation to find the instructions on how to install here:\
 [docs.vigilio.tugcan.net](https://docs.vigilio.tugcan.net/)
 
 ## 🔥 Quick Installation
@@ -39,7 +39,7 @@ Default password: `adminadmin`
 ## 👍 Features
 
 * Easy to install.
-* Automated movie info, imdb score, image, genre, subtitle fetching.
+* Automated movie info, imdb score, image, genre, subtitle downloading.
 * Continue movie feature.
 * My list feature that you can add and remove your movies.
 * Fully featured video player with subtitle and video quality options.
