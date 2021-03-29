@@ -97,7 +97,7 @@ play without a problem.
 Deleting a movie
 ----------------
 
-Head to **Mange** and find the movie or you can click on gear icon on movie posters. Once you are
+Head to **Manage** and find the movie or you can click on gear icon on movie posters. Once you are
 at the movie details page, under *Management tools* you can find the row *Remove this movie and everything related to it*
 and next to it there is a clickable text **Click here to reveal the button.**. Once clicked, this text should
 turn into **Delete this movie** button. You can use this button to delete this movie. This will delete the following:
@@ -122,8 +122,8 @@ Download subtitles
 
 When adding a movie, subtitles should automatically be added but you may want to repeat these when,
 
-* When you change your language settings.
-* When you add a movie by manually through admin panel.
+* You change your language settings.
+* You add a movie by manually through admin panel.
 
 Head to **Manage -> Settings -> Redownload Subtitles**
 
