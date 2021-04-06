@@ -28,7 +28,7 @@ class ApiResponse:
     language: str
     download_link: str
     sub_filename: str
-    sub_hidden_name: str
+    sub_hidden_name: str = ""
     full_path: Optional[str] = None
 
 
