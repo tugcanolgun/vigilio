@@ -13,9 +13,13 @@ logger = logging.getLogger(__name__)
 def remove_vtt_subtitles_folder(movie_content: MovieContent) -> None:
     full_path: str = movie_content.full_path
     main: str = movie_content.main_folder
-    folder_path: PosixPath = (
-        Path(full_path[: full_path.index(main) + len(main)]) / "vtt_subtitles"
-    )
+    try:
+        folder_path: PosixPath = (
+            Path(full_path[: full_path.index(main) + len(main)]) / "vtt_subtitles"
+        )
+    except TypeError:
+        return
+
     if folder_path.is_dir():
         try:
             shutil.rmtree(str(folder_path))

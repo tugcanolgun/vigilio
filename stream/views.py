@@ -74,7 +74,6 @@ def watch(request: WSGIRequest, movie_id: int) -> HttpResponse:
         else user_history.current_second,
         "HTTP_REFERER": request.META.get("HTTP_REFERER", ""),
     }
-    logger.info(request.META.get("HTTP_REFERER", "NOPE"))
 
     return render(request, "stream/watch.html", context)
 

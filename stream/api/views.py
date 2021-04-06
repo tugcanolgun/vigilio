@@ -1,7 +1,7 @@
 import logging
-from typing import Dict, Optional
+from typing import Dict
 
-from django.db.models import QuerySet, Q
+from django.db.models import QuerySet
 from rest_framework import status
 from rest_framework.generics import GenericAPIView
 from rest_framework.request import Request
@@ -9,7 +9,11 @@ from rest_framework.response import Response
 
 from panel.api.handlers import MoviesEndpointHandler
 from panel.decorators import DemoOrIsAuthenticated
-from stream.api.handlers import SaveCurrentSecondHandler
+from stream.api.handlers import (
+    SaveCurrentSecondHandler,
+    UserMovieHistoryHandler,
+    MoviesHandler,
+)
 from stream.api.serializers import (
     MovieSerializer,
     SaveCurrentSecondSerializer,
@@ -26,29 +30,14 @@ logger = logging.getLogger(__name__)
 
 class ContinueMoviesEndpoint(GenericAPIView):
     serializer_class = UserMovieHistorySerializer
+    handler_class = UserMovieHistoryHandler
     permission_classes = [DemoOrIsAuthenticated]
     verbose_request_logging = True
 
     def get(self, request: Request) -> Response:
-        if request.query_params.get("id", None) is None:
-            user_history: Optional[UserMovieHistory] = (
-                UserMovieHistory.objects.filter(user=request.user)
-                .filter(is_watched=False)
-                .filter(movie__is_ready=True)
-                .filter(movie__movie_content__is_ready=True)
-                .order_by("-updated_at")
-                .distinct()
-                .all()
-            )
-        else:
-            user_history: Optional[UserMovieHistory] = (
-                UserMovieHistory.objects.filter(user=request.user)
-                .filter(is_watched=False)
-                .filter(movie__is_ready=True)
-                .filter(movie__movie_content__is_ready=True)
-                .filter(movie__id=request.query_params.get("id"))
-                .all()
-            )
+        user_history: QuerySet[UserMovieHistory] = self.handler_class().handle(
+            history_id=request.query_params.get("id", None), user=request.user
+        )
 
         serialized_locations = self.get_serializer(
             user_history, user=request.user, many=True
@@ -65,34 +54,15 @@ class ContinueMoviesEndpoint(GenericAPIView):
 
 class MoviesEndpoint(GenericAPIView):
     serializer_class = MoviesEndpointSerializer
+    handler_class = MoviesHandler
     permission_classes = [DemoOrIsAuthenticated]
     verbose_request_logging = True
 
     def get(self, request: Request) -> Response:
-        if request.query_params.get("id", None) is not None:
-            movies: QuerySet[Movie] = Movie.objects.filter(
-                id=request.query_params.get("id")
-            ).all()
-        elif request.query_params.get("query", None) is not None:
-            movies: QuerySet[Movie] = (
-                Movie.objects.filter(movie_content__is_ready=True)
-                .filter(is_ready=True)
-                .filter(
-                    Q(title__contains=request.query_params.get("query"))
-                    | Q(description__contains=request.query_params.get("query"))
-                )
-                .distinct()
-                .order_by("-id")
-                .all()
-            )
-        else:
-            movies: QuerySet[Movie] = (
-                Movie.objects.filter(movie_content__is_ready=True)
-                .filter(is_ready=True)
-                .distinct()
-                .order_by("-id")
-                .all()
-            )
+        movies: QuerySet[Movie] = self.handler_class().handle(
+            movie_id=request.query_params.get("id", None),
+            query=request.query_params.get("query", None),
+        )
 
         serialized_movies = MovieSerializer(movies, user=request.user, many=True)
 
@@ -156,7 +126,9 @@ class CategoriesEndpoint(GenericAPIView):
                 moviedb_id=request.query_params.get("id")
             ).all()
 
-        serialized_locations = self.get_serializer(categories, many=True)
+        serialized_locations = self.get_serializer(
+            categories, user=request.user, many=True
+        )
 
         return Response(
             {

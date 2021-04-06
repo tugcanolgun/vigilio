@@ -1,13 +1,62 @@
 import logging
-from typing import Dict
+from typing import Dict, Optional
 
 from django.contrib.auth.models import User
+from django.db.models import QuerySet, Q
 from rest_framework.exceptions import APIException
 
 from stream.api.serializers import SaveCurrentSecond
 from stream.models import UserMovieHistory, Movie
 
 logger = logging.getLogger(__name__)
+
+
+class UserMovieHistoryHandler:
+    @staticmethod
+    def handle(history_id: Optional[str], user: User) -> QuerySet[UserMovieHistory]:
+        if history_id is not None:
+            return (
+                UserMovieHistory.objects.filter(user=user)
+                .filter(is_watched=False)
+                .filter(movie__is_ready=True)
+                .filter(movie__movie_content__is_ready=True)
+                .filter(movie__id=history_id)
+                .all()
+            )
+
+        return (
+            UserMovieHistory.objects.filter(user=user)
+            .filter(is_watched=False)
+            .filter(movie__is_ready=True)
+            .filter(movie__movie_content__is_ready=True)
+            .order_by("-updated_at")
+            .distinct()
+            .all()
+        )
+
+
+class MoviesHandler:
+    @staticmethod
+    def handle(movie_id: Optional[str], query: Optional[str]) -> QuerySet[Movie]:
+        if movie_id is not None:
+            return Movie.objects.filter(id=movie_id).all()
+        elif query is not None:
+            return (
+                Movie.objects.filter(movie_content__is_ready=True)
+                .filter(is_ready=True)
+                .filter(Q(title__contains=query) | Q(description__contains=query))
+                .distinct()
+                .order_by("-id")
+                .all()
+            )
+
+        return (
+            Movie.objects.filter(movie_content__is_ready=True)
+            .filter(is_ready=True)
+            .distinct()
+            .order_by("-id")
+            .all()
+        )
 
 
 class SaveCurrentSecondHandler:

@@ -49,7 +49,6 @@ It is recommended that you run docker behind nginx.
         server_name example.com;  # Change this with your domain
 
         location / {
-            #try_files $uri $uri/ =404;
             include proxy_params;
             proxy_pass http://localhost:8000;  # Default is port 8000, change if necessary
         }

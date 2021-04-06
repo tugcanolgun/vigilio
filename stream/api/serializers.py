@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Dict, Any
 
+from django.db.models import QuerySet
 from rest_framework import serializers
 
 from stream.models import (
@@ -93,16 +94,32 @@ class MovieSerializer(serializers.ModelSerializer):
 class CategoriesWithMoviesSerializer(serializers.ModelSerializer):
     movies = serializers.SerializerMethodField(source="get_movies")
 
+    def __init__(self, *args, **kwargs):
+        if kwargs.get("user"):
+            self.user = kwargs.pop("user")
+        super().__init__(*args, **kwargs)
+
     class Meta:
         model = MovieDBCategory
         exclude = ()
 
     def get_movies(self, obj):
-        return MovieSerializer(
+        movies: QuerySet[Movie] = (
             Movie.objects.filter(moviedb_category__moviedb_id=obj.moviedb_id)
             .filter(is_ready=True)
             .filter(movie_content__is_ready=True)
-            .distinct(),
+            .distinct()
+        )
+        if hasattr(self, "user"):
+            return MovieSerializer(
+                movies,
+                user=self.user,
+                many=True,
+            ).data
+
+        return MovieSerializer(
+            movies,
+            user=self.user,
             many=True,
         ).data
 

@@ -13,9 +13,9 @@ from requests import Response
 
 from panel.tasks.inmemory import get_setting
 from panel.tasks.opensubtitles_hasher import get_hash
-from panel.tasks.srt_to_vtt import convert_srt_to_vtt
 from stream.models import MovieContent, Movie, MovieSubtitle
 from watch.celery import app
+from watch.settings.base import BASE_DIR
 
 logger = logging.getLogger(__name__)
 
@@ -78,7 +78,9 @@ def _get_response_from_api(
 
 
 def _convert_srt_to_vtt(srt_file: str) -> None:
-    convert_srt_to_vtt(srt_file, ignore_errors=True)
+    _input: PosixPath = Path(srt_file)
+    output_file: str = f"{_input.parent / _input.stem}.vtt"
+    os.system(f"{BASE_DIR}/panel/tasks/srt2vtt.sh {srt_file} > {output_file}")
 
 
 def _convert_srts_to_vtts_in_folder(subtitles_folder: PosixPath) -> None:
