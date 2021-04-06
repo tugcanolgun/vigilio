@@ -5,6 +5,7 @@ import logging
 import os
 import shutil
 import urllib
+from dataclasses import dataclass
 from pathlib import Path, PosixPath
 from typing import Dict, Any, Optional, List, Set
 
@@ -22,11 +23,21 @@ logger = logging.getLogger(__name__)
 OS_URL: str = "https://rest.opensubtitles.org/search"
 
 
+@dataclass
+class ApiResponse:
+    language: str
+    download_link: str
+    sub_filename: str
+    sub_hidden_name: str = ""
+    full_path: Optional[str] = None
+
+
 def download_and_extract_subtitle(url: str, root_path: str, subtitle_name: str) -> None:
     response: Response = requests.get(url)
 
     if response.status_code != 200:
-        raise Exception(f"Subtitle could not be downloaded for {url}")
+        logger.error(f"Subtitle could not be downloaded for {url}")
+        return
 
     assert Path(root_path).is_dir() is True, f"{root_path} is not a folder"
 
@@ -35,20 +46,37 @@ def download_and_extract_subtitle(url: str, root_path: str, subtitle_name: str) 
             shutil.copyfileobj(f_in, f_out)
 
 
-def _request_from_api(url: str) -> Optional[List[Dict[str, Any]]]:
+def _extract_api_response(response: List[Dict[str, Any]]) -> List[ApiResponse]:
+    api_responses: List[ApiResponse] = []
+    for res in response:
+        if res.get("SubFormat") != "srt" or res.get("SubDownloadLink", "") == "":
+            continue
+
+        api_responses.append(
+            ApiResponse(
+                language=res.get("SubLanguageID", "eng"),
+                download_link=res.get("SubDownloadLink"),
+                sub_filename=res.get("SubFileName"),
+            )
+        )
+
+    return api_responses
+
+
+def _request_from_api(url: str) -> List[ApiResponse]:
     response: Response = requests.get(url, headers={"User-Agent": "TemporaryUserAgent"})
 
     if response.status_code != 200:
         raise Exception(f"Opensubtitles.org API returned {response.status_code}")
 
     try:
-        return json.loads(response.text)
+        return _extract_api_response(json.loads(response.text))
     except json.decoder.JSONDecodeError:
         logger.warning("Opensubtitles.org API response could not be loaded as json")
-        return None
+        return []
     except Exception as exc:
         logger.warning(f"Error occured: {exc}")
-        return None
+        return []
 
 
 def _get_response_from_api(
@@ -56,8 +84,9 @@ def _get_response_from_api(
     file_byte_size: int,
     imdb_id: str,
     file_name: str,
+    limit: int,
     language: str = "eng",
-) -> Optional[List[Dict[str, Any]]]:
+) -> List[ApiResponse]:
     _movie_byte_size: str = f"/moviebytesize-{file_byte_size}"
     _movie_hash: str = f"/moviehash-{file_hash}"
     _imdb = f"/imdbid-{imdb_id[2:]}"
@@ -71,10 +100,21 @@ def _get_response_from_api(
         OS_URL + _imdb + _language,
     ]
 
+    api_response: List[ApiResponse] = []
     for _url in request_list:
-        response: Optional[List[Dict[str, Any]]] = _request_from_api(_url)
-        if response:
-            return response
+        response: List[ApiResponse] = _request_from_api(_url)
+        api_response.extend(response)
+
+        if len(api_response) >= limit:
+            for index, res in enumerate(api_response):
+                if index > limit:
+                    break
+
+                res.sub_hidden_name = f"{res.language}{index + 1}.srt"
+
+            return api_response[:limit]
+
+    return []
 
 
 def _convert_srt_to_vtt(srt_file: str) -> None:
@@ -101,7 +141,9 @@ def _get_vtt_files_in_folder(folder: PosixPath) -> List[PosixPath]:
 
 
 def _add_vtt_files_to_movie_content(
-    movie_content: MovieContent, subtitles_folder: PosixPath
+    movie_content: MovieContent,
+    subtitles_folder: PosixPath,
+    file_to_lang: Dict[str, str],
 ) -> None:
     vtt_files: List[PosixPath] = _get_vtt_files_in_folder(subtitles_folder)
     existing: Set[str] = {sub.full_path for sub in movie_content.movie_subtitle.all()}
@@ -114,6 +156,7 @@ def _add_vtt_files_to_movie_content(
             full_path=str(vtt_file),
             relative_path=str(vtt_file.relative_to(vtt_file.parent.parent.parent)),
             file_name=str(vtt_file.name),
+            lang_three=file_to_lang.get(vtt_file.name, "eng"),
             suffix=str(vtt_file.suffix.lower()),
         )
         movie_content.movie_subtitle.add(movie_subtitle)
@@ -142,25 +185,19 @@ def get_subtitle_language() -> List[str]:
 
 
 def _process_api_response_and_download_subtitles(
-    api_responses: List[List[Dict[str, Any]]],
+    api_responses: List[List[ApiResponse]],
     subtitles_folder: PosixPath,
-    limit: int,
 ) -> None:
-    for response in api_responses:
-        count: int = 1
-        for _obj in response:
-            if count >= limit + 1:
-                break
-            if _obj.get("SubFormat") != "srt" or _obj.get("SubDownloadLink", "") == "":
-                continue
-
-            logger.info(f"Downloading and extracting subtitle number {count + 1}")
-            download_and_extract_subtitle(
-                _obj.get("SubDownloadLink"),
-                str(subtitles_folder),
-                f"{_obj.get('SubLanguageID', 'unk')}{count}.srt",
+    for sub_langs in api_responses:
+        for index, sub in enumerate(sub_langs):
+            logger.info(
+                f"Downloading and extracting subtitle {sub.language} - {index + 1}"
             )
-            count += 1
+            download_and_extract_subtitle(
+                sub.download_link,
+                str(subtitles_folder),
+                sub.sub_hidden_name,
+            )
 
 
 def _get_subtitles_from_path(
@@ -212,6 +249,16 @@ def _delete_original_subtitles(subtitles_folder: PosixPath) -> None:
             os.remove(str(item))
 
 
+def _get_file_to_lang_map(results: List[List[ApiResponse]]) -> Dict[str, str]:
+    _temp: Dict[str, str] = {}
+    for sub_langs in results:
+        for sub in sub_langs:
+            _temp[sub.sub_hidden_name.replace(".srt", ".vtt")] = sub.language
+            _temp[sub.sub_filename.replace(".srt", ".vtt")] = sub.language
+
+    return _temp
+
+
 @app.task
 def fetch_subtitles(
     movie_content_id: int, limit: int = 5, delete_original: bool = False
@@ -234,13 +281,14 @@ def fetch_subtitles(
     file_name: str = movie.title
 
     logger.info(f"Requesting subtitles from opensubtitles for {movie_content_id}")
-    results: List[List[Dict[str, Any]]] = []
+    results: List[List[ApiResponse]] = []
     for language in get_subtitle_language():
-        _response: Optional[List[Dict[str, Any]]] = _get_response_from_api(
+        _response: List[ApiResponse] = _get_response_from_api(
             file_hash=file_hash,
             file_byte_size=file_byte_size,
             imdb_id=imdb_id,
             file_name=file_name,
+            limit=limit,
             language=language,
         )
         if _response:
@@ -265,7 +313,6 @@ def fetch_subtitles(
     _process_api_response_and_download_subtitles(
         api_responses=results,
         subtitles_folder=subtitles_folder,
-        limit=limit,
     )
 
     _convert_srts_to_vtts_in_folder(subtitles_folder=subtitles_folder)
@@ -274,8 +321,12 @@ def fetch_subtitles(
         _delete_original_subtitles(subtitles_folder=subtitles_folder)
 
     logger.info(f"srts are converted to vtts for {movie_content_id}")
+
+    file_to_lang: Dict[str, str] = _get_file_to_lang_map(results)
     _add_vtt_files_to_movie_content(
-        movie_content=movie_content, subtitles_folder=subtitles_folder
+        movie_content=movie_content,
+        subtitles_folder=subtitles_folder,
+        file_to_lang=file_to_lang,
     )
     _change_permissions(subtitles_folder=subtitles_folder)
     logger.info(f"Subtitles are added to movie content {movie_content_id}")
