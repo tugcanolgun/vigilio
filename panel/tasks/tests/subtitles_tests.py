@@ -14,7 +14,6 @@ from panel.tasks.subtitles import (
     _request_from_api,
     _get_response_from_api,
     OS_URL,
-    _convert_srt_to_vtt,
     _get_vtt_files_in_folder,
     _add_vtt_files_to_movie_content,
     _change_permissions,
@@ -133,17 +132,6 @@ class TestGetResponseFromApi:
 
         assert isinstance(result, dict)
         assert result == json.loads(MockRequest._text)
-
-
-def test_runs_srt_to_vtt_correctly(mocker: MockerFixture) -> None:
-    mocker.patch("panel.tasks.subtitles.convert_srt_to_vtt")
-    srt_file: str = "/some/dir/subtitle.srt"
-
-    _convert_srt_to_vtt(srt_file=srt_file)
-
-    panel.tasks.subtitles.convert_srt_to_vtt.assert_called_once_with(
-        srt_file, ignore_errors=True
-    )
 
 
 def test_get_vtt_files_in_folder(tmp_path: PosixPath) -> None:
