@@ -126,7 +126,9 @@ class CategoriesEndpoint(GenericAPIView):
                 moviedb_id=request.query_params.get("id")
             ).all()
 
-        serialized_locations = self.get_serializer(categories, many=True)
+        serialized_locations = self.get_serializer(
+            categories, user=request.user, many=True
+        )
 
         return Response(
             {
