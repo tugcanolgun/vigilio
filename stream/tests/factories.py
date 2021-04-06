@@ -2,6 +2,7 @@ import factory
 from django.contrib.auth.models import User
 
 from stream import models
+from stream.models import UserMovieHistory
 
 
 class MovieSubtitleFactory(factory.django.DjangoModelFactory):
@@ -49,3 +50,8 @@ class UserFactory(factory.django.DjangoModelFactory):
 
     username = "test_user"
     password = "5q4rq4%WByk"
+
+
+class UserMovieHistoryFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = UserMovieHistory
