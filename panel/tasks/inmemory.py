@@ -39,7 +39,7 @@ def get_redis() -> Optional[redis.Redis]:
 def process_result(key: str, result: bytes) -> Any:
     try:
         if key in {"DELETE_ORIGINAL_FILES", "DEMO"}:
-            return bool(result)
+            return result in {"true", "True", "1"}
         else:
             return result.decode("utf-8")
     except Exception:
