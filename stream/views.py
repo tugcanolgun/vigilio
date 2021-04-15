@@ -9,6 +9,7 @@ from django.shortcuts import render
 from django.urls import reverse
 
 from panel.decorators import check_settings, demo_or_login_required
+from panel.tasks.tests.iso_639 import iso_639_2_to_1
 from stream.handlers import _get_url, _get_quality_string
 from stream.models import MovieContent, Movie, UserMovieHistory
 
@@ -59,6 +60,7 @@ def watch(request: WSGIRequest, movie_id: int) -> HttpResponse:
         {
             "url": _get_url(full_path=sub.full_path, relative_path=sub.relative_path),
             "name": Path(sub.file_name).stem,
+            "language": iso_639_2_to_1.get(sub.lang_three, "en"),
         }
         for movie_content in movie_contents
         for sub in movie_content.movie_subtitle.all()

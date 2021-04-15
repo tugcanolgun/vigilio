@@ -30,10 +30,10 @@
     >
         {% for subtitle in subtitles %}
             {% if forloop.first %}
-                <track kind="captions" src="{{ subtitle.url }}" srclang="en" label="{{ subtitle.name }}"
+                <track kind="captions" src="{{ subtitle.url }}" srclang="{{ subtitle.language }}" label="{{ subtitle.name }}"
                        default/>
             {% else %}
-                <track kind="captions" src="{{ subtitle.url }}" srclang="en" label="{{ subtitle.name }}"/>
+                <track kind="captions" src="{{ subtitle.url }}" srclang="{{ subtitle.language }}" label="{{ subtitle.name }}"/>
             {% endif %}
         {% endfor %}
         <p class="vjs-no-js">

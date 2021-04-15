@@ -1,7 +1,6 @@
-import json
 import urllib
 from pathlib import PosixPath, Path
-from typing import Set, List, Any, Dict
+from typing import Set, List, Dict
 
 import pytest
 from _pytest.monkeypatch import MonkeyPatch
@@ -21,6 +20,8 @@ from panel.tasks.subtitles import (
     fetch_subtitles,
     _get_subtitles_from_path,
     _search_existing_subtitles_and_move,
+    ApiResponse,
+    _get_encoding,
 )
 from panel.tasks.tests.mocks import MockRequest
 from panel.tasks.tests.torrent_tests import CreateFileTree
@@ -33,18 +34,18 @@ from stream.tests.factories import (
 
 
 class TestDownloadAndExtractSubtitle:
-    def test_raises_when_api_returns_error(
+    def test_does_not_raise_when_api_returns_error(
         self, tmp_path: PosixPath, mocker: MockerFixture
     ) -> None:
         mocker.patch("panel.tasks.subtitles.requests", MockRequest)
         url: str = "tor://test"
 
-        with pytest.raises(Exception) as exc:
+        try:
             download_and_extract_subtitle(
                 url=url, root_path=str(tmp_path), subtitle_name="subtitle.srt"
             )
-
-        assert str(exc.value) == f"Subtitle could not be downloaded for {url}"
+        except Exception:
+            pytest.fail("API errors should not raise errors.")
 
     def test_raises_if_root_folder_is_not_folder(self, mocker: MockerFixture) -> None:
         mocker.patch("panel.tasks.subtitles.requests", MockRequest)
@@ -81,11 +82,13 @@ class TestRequestFromApi:
 
         assert "Opensubtitles.org API returned" in str(exc.value)
 
-    def test_returns_none_if_text_not_loads_as_json(self, mocker: MockRequest) -> None:
+    def test_returns_empty_list_when_text_not_loads_as_json(
+        self, mocker: MockRequest
+    ) -> None:
         mocker.patch("panel.tasks.subtitles.requests", MockRequest)
         mocker.patch("panel.tasks.tests.mocks.MockRequest.text", "lalala")
 
-        assert _request_from_api(url="https://something") is None
+        assert _request_from_api(url="https://something") == []
 
 
 class TestGetResponseFromApi:
@@ -110,6 +113,7 @@ class TestGetResponseFromApi:
             file_byte_size=_file_byte_size,
             imdb_id=_imdb_id,
             file_name=_file_name,
+            limit=5,
             language=_language,
         )
 
@@ -118,7 +122,7 @@ class TestGetResponseFromApi:
         request_from_api.assert_any_call(
             OS_URL + file_byte_size + file_hash + imdb_id + language
         )
-        assert result is None
+        assert result == []
 
     def test_returns_response_correctly(self, mocker: MockerFixture) -> None:
         mocker.patch("panel.tasks.subtitles.requests", MockRequest)
@@ -127,11 +131,12 @@ class TestGetResponseFromApi:
             file_hash="abcdef",
             file_byte_size=1,
             imdb_id="tt010101010",
+            limit=5,
             file_name="video.mp4",
         )
 
-        assert isinstance(result, dict)
-        assert result == json.loads(MockRequest._text)
+        assert isinstance(result, list)
+        assert result == []
 
 
 def test_get_vtt_files_in_folder(tmp_path: PosixPath) -> None:
@@ -150,7 +155,8 @@ def test_get_vtt_files_in_folder(tmp_path: PosixPath) -> None:
 
 @pytest.mark.usefixtures("db")
 def test_add_vtt_files_to_movie_content(tmp_path: PosixPath) -> None:
-    videos: List[str] = ["eng.vtt", "subtitle.vtt"]
+    videos: List[str] = ["ger.vtt", "subtitle.vtt"]
+    file_to_lang: Dict[str, str] = {file_name: "ger" for file_name in videos}
     for video in videos:
         (tmp_path / video).touch()
     movie_content: MovieContent = MovieContentFactory()
@@ -158,7 +164,9 @@ def test_add_vtt_files_to_movie_content(tmp_path: PosixPath) -> None:
     assert not MovieSubtitle.objects.exists()
 
     _add_vtt_files_to_movie_content(
-        movie_content=movie_content, subtitles_folder=tmp_path
+        movie_content=movie_content,
+        subtitles_folder=tmp_path,
+        file_to_lang=file_to_lang,
     )
     movie_content.refresh_from_db()
 
@@ -173,12 +181,14 @@ def test_add_vtt_files_to_movie_content(tmp_path: PosixPath) -> None:
             Path(tmp_path.parent.name) / tmp_path.name / videos[index]
         )
         assert movie_subtitle.file_name == videos[index]
+        assert movie_subtitle.lang_three == "ger"
         assert movie_subtitle.suffix == ".vtt"
 
 
 @pytest.mark.usefixtures("db")
 def test_add_vtt_files_to_movie_content_skips_existing(tmp_path: PosixPath) -> None:
     videos: List[str] = ["eng.vtt", "subtitle.vtt"]
+    file_to_lang: Dict[str, str] = {file_name: "ger" for file_name in videos}
     existing: PosixPath = tmp_path / videos[0]
     for video in videos:
         (tmp_path / video).touch()
@@ -196,7 +206,9 @@ def test_add_vtt_files_to_movie_content_skips_existing(tmp_path: PosixPath) -> N
     assert movie_content.movie_subtitle.count() == 1
 
     _add_vtt_files_to_movie_content(
-        movie_content=movie_content, subtitles_folder=tmp_path
+        movie_content=movie_content,
+        subtitles_folder=tmp_path,
+        file_to_lang=file_to_lang,
     )
     movie_content.refresh_from_db()
 
@@ -251,19 +263,23 @@ class TestGetSubtitleLanguage:
 
 
 def _mock_get_response_from_api(
-    file_hash, file_byte_size, imdb_id, file_name, language
-) -> List[Dict[str, Any]]:
+    file_hash, file_byte_size, imdb_id, file_name, limit, language
+) -> List[ApiResponse]:
     return [
-        {
-            "SubFormat": "srt",
-            "SubDownloadLink": "http://test",
-            "SubLanguageID": f"{language}",
-        },
-        {
-            "SubFormat": "srt",
-            "SubDownloadLink": "http://test1",
-            "SubLanguageID": f"{language}",
-        },
+        ApiResponse(
+            download_link="http://test",
+            language=language,
+            sub_filename="best_movie.srt",
+            sub_hidden_name=f"{language}1.srt",
+            sub_encoding="CP1252",
+        ),
+        ApiResponse(
+            download_link="http://test2",
+            language=language,
+            sub_filename="lala.srt",
+            sub_hidden_name=f"{language}2.srt",
+            sub_encoding="CP1252",
+        ),
     ]
 
 
@@ -299,7 +315,7 @@ class TestFetchSubtitles:
         subtitle_dir: str = "vtt_subtitles"
         movie_content: MovieContent = MovieContentFactory(full_path=str(tmp_path))
         MovieFactory.create(movie_content=[movie_content])
-        langs: str = get_subtitle_language()
+        langs: List[str] = get_subtitle_language()
 
         assert not movie_content.movie_subtitle.exists()
 
@@ -389,3 +405,14 @@ def test_search_existing_subtitles_and_move(tmp_path: PosixPath) -> None:
         assert _f.is_file()
         assert _f.suffix == ".srt"
         assert _f.name == f"org{index + 1}.srt"
+
+
+class TestGetEncoding:
+    def test_accidental_empty_should_return_utf_8(self) -> None:
+        assert _get_encoding(None) == "utf-8"
+
+    def test_cp_encodings_should_return_without_cp(self) -> None:
+        assert _get_encoding("CP1252") == "1252"
+
+    def test_should_return_encoding_as_is(self) -> None:
+        assert _get_encoding("iso8859_2") == "iso8859_2"

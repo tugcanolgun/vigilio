@@ -18,6 +18,7 @@ class MovieSubtitle(CoreModel):
     relative_path = models.CharField(max_length=255)
     file_name = models.CharField(max_length=255)
     suffix = models.CharField(max_length=7)
+    lang_three = models.CharField(max_length=3, default="eng")
     updated_at = models.DateTimeField(auto_now=True)
 
 
