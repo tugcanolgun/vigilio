@@ -21,6 +21,7 @@ from panel.tasks.subtitles import (
     _get_subtitles_from_path,
     _search_existing_subtitles_and_move,
     ApiResponse,
+    _get_encoding,
 )
 from panel.tasks.tests.mocks import MockRequest
 from panel.tasks.tests.torrent_tests import CreateFileTree
@@ -270,12 +271,14 @@ def _mock_get_response_from_api(
             language=language,
             sub_filename="best_movie.srt",
             sub_hidden_name=f"{language}1.srt",
+            sub_encoding="CP1252",
         ),
         ApiResponse(
             download_link="http://test2",
             language=language,
             sub_filename="lala.srt",
             sub_hidden_name=f"{language}2.srt",
+            sub_encoding="CP1252",
         ),
     ]
 
@@ -402,3 +405,14 @@ def test_search_existing_subtitles_and_move(tmp_path: PosixPath) -> None:
         assert _f.is_file()
         assert _f.suffix == ".srt"
         assert _f.name == f"org{index + 1}.srt"
+
+
+class TestGetEncoding:
+    def test_accidental_empty_should_return_utf_8(self) -> None:
+        assert _get_encoding(None) == "utf-8"
+
+    def test_cp_encodings_should_return_without_cp(self) -> None:
+        assert _get_encoding("CP1252") == "1252"
+
+    def test_should_return_encoding_as_is(self) -> None:
+        assert _get_encoding("iso8859_2") == "iso8859_2"

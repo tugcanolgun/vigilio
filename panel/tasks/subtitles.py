@@ -28,12 +28,34 @@ class ApiResponse:
     language: str
     download_link: str
     sub_filename: str
+    sub_encoding: str
     sub_hidden_name: str = ""
     full_path: Optional[str] = None
 
 
-def download_and_extract_subtitle(url: str, root_path: str, subtitle_name: str) -> None:
-    response: Response = requests.get(url)
+def _get_encoding(encoding: str) -> str:
+    if not encoding:
+        return "utf-8"
+
+    if encoding.lower().startswith("cp"):
+        return encoding[2:]
+
+    return encoding
+
+
+def extract_subtitle(content: io.BytesIO, encoding: str, file_path: str) -> None:
+    with gzip.open(content, mode="rt", encoding=encoding) as f_in:
+        with open(file_path, "w") as f_out:
+            shutil.copyfileobj(f_in, f_out)
+
+
+def download_and_extract_subtitle(
+    url: str, root_path: str, subtitle_name: str, encoding: str = ""
+) -> None:
+    try:
+        response: Response = requests.get(url)
+    except requests.exceptions.RequestException:
+        return
 
     if response.status_code != 200:
         logger.error(f"Subtitle could not be downloaded for {url}")
@@ -41,9 +63,18 @@ def download_and_extract_subtitle(url: str, root_path: str, subtitle_name: str) 
 
     assert Path(root_path).is_dir() is True, f"{root_path} is not a folder"
 
-    with gzip.open(io.BytesIO(response.content), "rb") as f_in:
-        with open(str(Path(root_path) / subtitle_name), "wb") as f_out:
-            shutil.copyfileobj(f_in, f_out)
+    try:
+        extract_subtitle(
+            content=io.BytesIO(response.content),
+            encoding=_get_encoding(encoding),
+            file_path=str(Path(root_path) / subtitle_name),
+        )
+    except LookupError:
+        extract_subtitle(
+            content=io.BytesIO(response.content),
+            encoding="utf-8",
+            file_path=str(Path(root_path) / subtitle_name),
+        )
 
 
 def _extract_api_response(response: List[Dict[str, Any]]) -> List[ApiResponse]:
@@ -57,6 +88,7 @@ def _extract_api_response(response: List[Dict[str, Any]]) -> List[ApiResponse]:
                 language=res.get("SubLanguageID", "eng"),
                 download_link=res.get("SubDownloadLink"),
                 sub_filename=res.get("SubFileName"),
+                sub_encoding=res.get("SubEncoding", "utf-8"),
             )
         )
 
@@ -197,6 +229,7 @@ def _process_api_response_and_download_subtitles(
                 sub.download_link,
                 str(subtitles_folder),
                 sub.sub_hidden_name,
+                sub.sub_encoding,
             )
 
 
