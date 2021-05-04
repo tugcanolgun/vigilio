@@ -20,8 +20,12 @@ const SubtitleLanguages = ({ fetchSettings, subtitles = '' }) => {
 
   const addToSelected = (val) => {
     if (selected.find((i) => i === val)) return;
-
-    setSelected([...selected, val]);
+    if (selected.length > 0 && selected.find((i) => i === '-')) {
+      const remDash = selected.filter((i) => i !== '-');
+      setSelected([...remDash, val].slice());
+    } else {
+      setSelected([...selected, val]);
+    }
   };
 
   const removeFromSelected = (val) => {
