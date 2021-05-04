@@ -3,16 +3,20 @@ ROOT_DIR:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 VENV:=${ROOT_DIR}/venv/bin
 
 default:
-	@echo "Available commands"
-	@echo "'lint'"
-	@echo "'fix'"
-	@echo "'run'"
-	@echo "'test'"
-	@echo "'install'"
-	@echo "'upgrade'"
-	@echo "'deploy'"
-	@echo "'start'"
-	@echo "'build'"
+	@echo "== Available commands for python =="
+	@echo "'pylint'\truns flake8"
+	@echo "'pyfix'\t\truns black"
+	@echo "'run'\t\truns manage.py runserver"
+	@echo "'test'\t\truns pytest"
+	@echo "'upgrade'\tupgrades python dependencies"
+	@echo "'deploy'\truns deploy script for vigilio"
+	@echo ""
+	@echo "== Available commands for JS =="
+	@echo "'jslint'\truns prettier check"
+	@echo "'jsfix'\t\truns prettier write"
+	@echo "'install'\truns yarn install"
+	@echo "'start'\t\truns webpack in dev mode (watch)"
+	@echo "'build'\t\truns webpack build in prod mode"
 
 check_venv:
 	@if [ -a ${ROOT_DIR}/venv/bin/activate ]; \
@@ -30,9 +34,9 @@ check_venv:
 		echo "Resuming normal operation"; \
 	fi;
 
-activate: check_venv
-	@echo "Activating virtualenv"
-	@. ${VENV}/activate;
+# ========================================================
+# JS
+# ========================================================
 
 jslint:
 	@echo "Running JS linter"
@@ -43,6 +47,27 @@ jsfix:
 	@echo "Running JS linter"
 	yarn --cwd ${ROOT_DIR}/frontend fix
 	@echo "Linter process ended"
+
+install:
+	@echo "Initiating node server..."
+	yarn --cwd ${ROOT_DIR}/frontend install
+
+start:
+	@echo "Initiating node server..."
+	yarn --cwd ${ROOT_DIR}/frontend start
+
+build:
+	@echo "Compiling js files..."
+	yarn --cwd ${ROOT_DIR}/frontend build
+	@echo "Compilation has finished."
+
+# ========================================================
+# PYTHON
+# ========================================================
+
+activate: check_venv
+	@echo "Activating virtualenv"
+	@. ${VENV}/activate;
 
 pylint: activate
 	@echo "Running linter"
@@ -61,19 +86,6 @@ test: activate
 run: activate
 	@echo "Running the server"
 	@${VENV}/python ${ROOT_DIR}/manage.py runserver
-
-install:
-	@echo "Initiating node server..."
-	yarn --cwd ${ROOT_DIR}/frontend install
-
-start:
-	@echo "Initiating node server..."
-	yarn --cwd ${ROOT_DIR}/frontend start
-
-build:
-	@echo "Compiling js files..."
-	yarn --cwd ${ROOT_DIR}/frontend build
-	@echo "Compilation has finished."
 
 upgrade: activate
 	@echo "Upgrading dependencies"

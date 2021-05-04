@@ -209,3 +209,5 @@ DEMO: bool = os.environ.get("DEMO", "false") in {
     "True",
     "1",
 }
+
+DEFAULT_AUTO_FIELD: str = "django.db.models.BigAutoField"
