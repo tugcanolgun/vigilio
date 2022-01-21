@@ -50,6 +50,17 @@ SECRET_KEY: str = os.environ["SECRET_KEY"]
 DEBUG: bool = False
 
 ALLOWED_HOSTS: List[str] = os.environ.get("ALLOWED_URLS", "").split(",")
+CSRF_TRUSTED_ORIGINS: List[str] = [f"https://{domain}:8000" for domain in os.environ.get("ALLOWED_URLS", "").split(",")]
+
+ALLOW_HTTP: bool = os.environ.get("ALLOW_HTTP", "false") in {
+    "true",
+    "True",
+    "1",
+}
+
+
+if ALLOW_HTTP:
+    CSRF_TRUSTED_ORIGINS.extend([f"http://{domain}:8000" for domain in os.environ.get("ALLOWED_URLS", "").split(",")])
 
 
 # Application definition

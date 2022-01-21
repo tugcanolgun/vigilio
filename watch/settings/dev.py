@@ -6,6 +6,9 @@ DEBUG = True
 
 INTERNAL_IPS = type(str("c"), (), {"__contains__": lambda *a: True})()
 
+
+CSRF_TRUSTED_ORIGINS.extend([f"http://{domain}:8000" for domain in os.environ.get("ALLOWED_URLS", "").split(",")])
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,

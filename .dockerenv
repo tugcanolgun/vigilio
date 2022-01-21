@@ -5,6 +5,7 @@ QBITTORRENT_PASSWORD=adminadmin
 DOWNLOAD_URI=/downloads/
 SUBTITLE_LANGS=""
 ALLOWED_URLS="*"
+ALLOW_HTTP=true
 MEDIA_FOLDER=/app/data/downloads/
 DELETE_ORIGINAL_FILES=true
 DEMO=false
